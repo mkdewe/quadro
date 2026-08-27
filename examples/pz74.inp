@@ -1,0 +1,11 @@
+name         pz74_mp_G14L_70
+sequence    gcgatgcacctgggggagtattgcggaggaaggtgcatcgc
+structure    (((((((((((^^.^^.((...))^^.^^.)))))))))))
+chi        .........................................
+orient        A-;B-
+rise                3.4
+twist        29
+path        A1;B1;A4;B4;A3;B3;A2;B2
+test               n
+rm_level           5
+iteration          70

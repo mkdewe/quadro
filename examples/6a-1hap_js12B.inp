@@ -1,0 +1,11 @@
+name     	1hap_js12B_100
+sequence	ggttggtgtggttgg
+structure	AB..BA...AB..BA
+chi    	    S...S....S...S.
+orient    	A+;B-
+rise    	3.4
+twist    	19
+path    	A1;B1;B4;A4;A3;B3;B2;A2
+test    	y
+rm_level	5
+iteration	100

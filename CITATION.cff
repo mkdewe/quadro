@@ -1,0 +1,49 @@
+cff-version: 1.2.0
+message: "If you use quadro, please cite it using the metadata below."
+title: "quadro: knowledge-based 3D structure generation for G-quadruplexes"
+abstract: >-
+  quadro builds atomic models of G-quadruplexes from a topological description
+  of the molecule — which residues form which tetrad, in what glycosidic
+  orientation, stacked with what rise and twist. It assembles the structure
+  residue by residue in torsion space using CYANA, then refines it in Cartesian
+  space using Xplor-NIH under planarity, dihedral and hydrogen-bond restraints.
+type: software
+version: "14L"
+license: MIT
+repository-code: "https://github.com/mkdewe/quadro"
+
+authors:
+  - family-names: Popenda
+    given-names: Mariusz
+    orcid: "https://orcid.org/0000-0001-9965-0430"
+    affiliation: "Institute of Bioorganic Chemistry, Polish Academy of Sciences, Poznań, Poland"
+
+  - family-names: Dziel
+    given-names: Dariusz Aleksander
+    orcid: "https://orcid.org/0009-0005-4702-6181"
+    affiliation: "Poznan University of Technology, Poznań, Poland"
+
+  - family-names: Szachniuk
+    given-names: Marta
+    orcid: "https://orcid.org/0000-0002-8724-7908"
+    affiliation: "Institute of Bioorganic Chemistry, Polish Academy of Sciences, Poznań, Poland; Poznan University of Technology, Poznań, Poland"
+
+  - family-names: Żok
+    given-names: Tomasz
+    orcid: "https://orcid.org/0000-0003-4103-9238"
+    affiliation: "Poznan University of Technology, Poznań, Poland"
+
+  - family-names: Sarzyńska
+    given-names: Joanna
+    orcid: "https://orcid.org/0000-0002-0500-2238"
+    affiliation: "Institute of Bioorganic Chemistry, Polish Academy of Sciences, Poznań, Poland"
+
+keywords:
+  - G-quadruplex
+  - nucleic acid structure
+  - structural bioinformatics
+  - molecular modelling
+  - CYANA
+  - Xplor-NIH
+  - RNA
+  - DNA

@@ -1,0 +1,26 @@
+# Copyright (c) 2002-05 Peter Guntert. All rights reserved.
+## 7MACROS: makeaco - CYANA macro
+
+var echo aco n i jr d t a1 a2
+
+syntax selection=*=* width=@r=0.1 weight=@r=10.0
+
+echo:=off
+
+aco:=d$getpid.aco
+
+print "\# Angle constraints" >$aco
+n=0
+t=0.5*width
+do i 1 nd
+  if (matchangle(i,'$selection')) then
+    jr=idr(i); d=dval(i); a1=d-t; a2=d+t; n=n+1
+    print "$rnum(jr) $rnam(jr) $dnam(i) ${d-t} ${d+t} $weight" >>
+  end if
+end do
+
+print >>.
+read aco $aco append info=none
+system "cat $aco > g.aco"
+remove $aco
+print "    $n angle constraints added."

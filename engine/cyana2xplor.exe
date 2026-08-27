@@ -1,0 +1,156 @@
+awk 'function print_H5T(){nn=0;ok1=0;ok2=0;doh=0.95
+for(k=1;k<=4;k++){if(name_at[k]==" P   "){ok2=k;x2=x[k];y2=y[k];z2=z[k]}
+              if(name_at[k]==" O5\047 "){ok1=k;x1=x[k];y1=y[k];z1=z[k]}
+             }
+if((ok2!=0)&&(ok1!=0)){
+ d=sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1))
+ if(d>0){cx=(x2-x1)/d;cy=(y2-y1)/d;cz=(z2-z1)/d
+         nx=x1+cx*doh;ny=y1+cy*doh;nz=z1+cz*doh
+         name=" H5T ";nn=nn+1
+         printf "ATOM%7d %s%3s  %4d    %8.3f%8.3f%8.3f  1.00  0.00      STRA\n",nn,name,res_xplor[substr(seq,1,1)],1,nx,ny,nz
+  kp=4
+        }}else{kp=1}
+}
+function print_H3T(){ok1=0;ok2=0;ok0=0;doh=0.95
+l=length(seq)
+for(k=start[l];k<start[l+1];k++){if(name_at[k]==" O3\047 "){ok0=k;x0=x[k];y0=y[k];z0=z[k]}
+              if(name_at[k]==" C3\047 "){ok2=k;x2=x[k];y2=y[k];z2=z[k]}
+              if(name_at[k]==" H3\047 "){ok1=k;x1=x[k];y1=y[k];z1=z[k]}
+                                }
+if((ok2!=0)&&(ok1!=0)&&(ok0!=0)){
+ d=sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1))
+ if(d>0){cx=(x2-x1)/d;cy=(y2-y1)/d;cz=(z2-z1)/d
+         nx=x0+cx*doh;ny=y0+cy*doh;nz=z0+cz*doh
+         name=" H3T ";nn=nn+1
+         printf "ATOM%7d %s%3s  %4d    %8.3f%8.3f%8.3f  1.00  0.00      STRA\n",nn,name,res_xplor[substr(seq,l,1)],l,nx,ny,nz
+        }
+                               }
+}
+BEGIN{
+res_xplor["A"]="ADE";res_xplor["C"]="CYT";res_xplor["G"]="GUA";res_xplor["U"]="URI"
+res_xplor["a"]="ADE";res_xplor["c"]="CYT";res_xplor["g"]="GUA";res_xplor["t"]="THY"
+atoms["A"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H4\047 | O4\047 | C1\047 | H1\047 | N9  | C4  | N3  | C2  | H2  | N1  | C6  | N6  | H61 | H62 | C5  | N7  | C8  | H8  | C2\047 | H2\047 | O2\047 |HO2\047 | C3\047 | H3\047 | O3\047 "
+count["A"]=split((atoms["A"]),A,"|");for(i=1;i<=count["A"];i++){Ato["A"][i]=A[i]};delete(A)
+atoms["C"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H4\047 | O4\047 | C1\047 | H1\047 | N1  | C6  | H6  | C2  | O2  | N3  | C4  | N4  | H41 | H42 | C5  | H5  | C2\047 | H2\047 | O2\047 |HO2\047 | C3\047 | H3\047 | O3\047 "
+count["C"]=split((atoms["C"]),A,"|");for(i=1;i<=count["C"];i++){Ato["C"][i]=A[i]};delete(A)
+atoms["G"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H4\047 | O4\047 | C1\047 | H1\047 | N9  | C4  | N3  | C2  | N2  | H21 | H22 | N1  | H1  | C6  | O6  | C5  | N7  | C8  | H8  | C2\047 | H2\047 | O2\047 |HO2\047 | C3\047 | H3\047 | O3\047 "
+count["G"]=split((atoms["G"]),A,"|");for(i=1;i<=count["G"];i++){Ato["G"][i]=A[i]};delete(A)
+atoms["U"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H4\047 | O4\047 | C1\047 | H1\047 | N1  | C6  | H6  | C2  | O2  | N3  | H3  | C4  | O4  | C5  | H5  | C2\047 | H2\047 | O2\047 |HO2\047 | C3\047 | H3\047 | O3\047 "
+count["U"]=split((atoms["U"]),A,"|");for(i=1;i<=count["U"];i++){Ato["U"][i]=A[i]};delete(A)
+atoms["a"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H4\047 | O4\047 | C1\047 | H1\047 | N9  | C4  | N3  | C2  | H2  | N1  | C6  | N6  | H61 | H62 | C5  | N7  | C8  | H8  | C2\047 | H2\047 |H2\047\047 | C3\047 | H3\047 | O3\047 "
+count["a"]=split((atoms["a"]),A,"|");for(i=1;i<=count["a"];i++){Ato["a"][i]=A[i]};delete(A)
+atoms["c"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H4\047 | O4\047 | C1\047 | H1\047 | N1  | C6  | H6  | C2  | O2  | N3  | C4  | N4  | H41 | H42 | C5  | H5  | C2\047 | H2\047 |H2\047\047 | C3\047 | H3\047 | O3\047 "
+count["c"]=split((atoms["c"]),A,"|");for(i=1;i<=count["c"];i++){Ato["c"][i]=A[i]};delete(A)
+atoms["g"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H4\047 | O4\047 | C1\047 | H1\047 | N9  | C4  | N3  | C2  | N2  | H21 | H22 | N1  | H1  | C6  | O6  | C5  | N7  | C8  | H8  | C2\047 | H2\047 |H2\047\047 | C3\047 | H3\047 | O3\047 "
+count["g"]=split((atoms["g"]),A,"|");for(i=1;i<=count["g"];i++){Ato["g"][i]=A[i]};delete(A)
+atoms["t"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H4\047 | O4\047 | C1\047 | H1\047 | N1  | C6  | H6  | C2  | O2  | N3  | H3  | C4  | O4  | C5  | C7  | H71 | H72 | H73 | C2\047 | H2\047 |H2\047\047 | C3\047 | H3\047 | O3\047 "
+count["t"]=split((atoms["t"]),A,"|");for(i=1;i<=count["t"];i++){Ato["t"][i]=A[i]};delete(A)
+#printf "A %s\n",count["A"]
+#for(i=1;i<=count["A"];i++){printf "|%s|\n",Ato["A"][i]}
+#printf "C %s\n",count["C"]
+#for(i=1;i<=count["C"];i++){printf "|%s|\n",Ato["C"][i]}
+#printf "G %s\n",count["G"]
+#for(i=1;i<=count["G"];i++){printf "|%s|\n",Ato["G"][i]}
+#printf "U %s\n",count["U"]
+#for(i=1;i<=count["U"];i++){printf "|%s|\n",Ato["U"][i]}
+#printf "a %s\n",count["a"]
+#for(i=1;i<=count["a"];i++){printf "|%s|\n",Ato["a"][i]}
+#printf "c %s\n",count["c"]
+#for(i=1;i<=count["c"];i++){printf "|%s|\n",Ato["c"][i]}
+#printf "g %s\n",count["g"]
+#for(i=1;i<=count["g"];i++){printf "|%s|\n",Ato["g"][i]}
+#printf "t %s\n",count["t"]
+#for(i=1;i<=count["t"];i++){printf "|%s|\n",Ato["t"][i]}
+seq=""
+}
+{
+if($1=="ATOM"){liat=liat+1;s=substr($0,22,5)
+ if(s!=sp){lires=lires+1;start[lires]=liat;li=0;name_res[lires]=substr($0,18,3);sp=s}
+ name_at[liat]=substr($0,13,5)
+  if((name_at[liat]==" HO2 ")||(name_at[liat]==" HO\047 ")){name_at[liat]="HO2\047 "}else{
+  if(name_at[liat]==" H2\042 "){name_at[liat]="H2\047\047 "}else{
+  if(name_at[liat]==" H5\042 "){name_at[liat]="H5\047\047 "}else{
+  if(name_at[liat]==" OP1 "){name_at[liat]=" O1P "}else{
+  if(name_at[liat]==" OP2 "){name_at[liat]=" O2P "}else{
+  if((name_res[lires]=="THY")||(name_res[lires]=="t  ")){
+    if(name_at[liat]=="1H7  "){name_at[liat]=" H71 "}
+    if(name_at[liat]=="2H7  "){name_at[liat]=" H72 "}
+    if(name_at[liat]=="3H7  "){name_at[liat]=" H73 "}
+#   if(name_at[liat]==" C7  "){name_at[liat]=" C7  "}
+                            }
+  if((name_res[lires]=="ADE")||(name_res[lires]=="a  ")||(name_res[lires]=="A  ")){
+    if((name_at[liat]=="1H6  ")||(name_at[liat]==" H0  ")){name_at[liat]=" H61 "}
+    if((name_at[liat]=="2H6  ")||(name_at[liat]==" H9  ")){name_at[liat]=" H62 "}
+                                                        }
+  if((name_res[lires]=="GUA")||(name_res[lires]=="g  ")||(name_res[lires]=="G  ")){
+    if((name_at[liat]=="1H2  ")||(name_at[liat]==" H0  ")){name_at[liat]=" H21 "}
+    if((name_at[liat]=="2H2  ")||(name_at[liat]==" H9  ")){name_at[liat]=" H22 "}
+                                                        }
+  if((name_res[lires]=="CYT")||(name_res[lires]=="c  ")||(name_res[lires]=="C  ")){
+    if((name_at[liat]=="1H4  ")||(name_at[liat]==" H0  ")){name_at[liat]=" H41 "}
+    if((name_at[liat]=="2H4  ")||(name_at[liat]==" H9  ")){name_at[liat]=" H42 "}
+                                                        }
+}}}}}
+ x[liat]=strtonum(substr($0,31,8))
+ y[liat]=strtonum(substr($0,39,8))
+ z[liat]=strtonum(substr($0,47,8))
+              }
+}END{
+start[lires+1]=liat+1
+for(i=1;i<=lires;i++){sym="-"
+n=0;for(j=start[i];j<start[i+1];j++){if(name_at[j]==" O2\047 "){n=j}}
+if(n==0){sym=tolower(substr(name_res[i],1,1))}else{sym=substr(name_res[i],1,1)}
+seq=seq""sym 
+                    }
+# print_xplor1.inp
+li_dna=0
+for(i=1;i<=length(seq);i++){
+if(index("acgtu",substr(seq,i,1))>0){li_dna=li_dna+1;dna[li_dna]=i}
+                           }
+printf "topology @TOPPAR:dna-rna-allatom.top end\n\n" > "t_xplor1.inp"
+printf "segment\n" >> "t_xplor1.inp"
+printf "    name=\042STRA\042\n" >> "t_xplor1.inp"
+printf "        chain\n" >> "t_xplor1.inp"
+printf "        link nuc head - * tail + * end\n" >> "t_xplor1.inp"
+printf "        first 5ter tail + * end\n" >> "t_xplor1.inp"
+printf "        last 3ter head - * end\n\n" >> "t_xplor1.inp"
+printf "        sequence\n\n" >> "t_xplor1.inp"
+for(i=1;i<=length(seq);i++){res=substr(seq,i,1)
+printf "%s ",res_xplor[res] >> "t_xplor1.inp"
+if(i%10==0){printf "\n" >> "t_xplor1.inp"}
+                           }
+if(i%10!=0){printf "\n" >> "t_xplor1.inp"}
+printf "\n        end\n    end\nend\n\n" >> "t_xplor1.inp"
+#if(length(seq)==li_dna){
+#printf "\npatch deox reference=nil=(resid all) end\n" >> "t_xplor1.inp"
+#                       }else{
+if(li_dna>0){
+  printf "for \0441 in (" >> "t_xplor1.inp"
+g=5
+for(j=1;j<=li_dna;j++){
+  printf " %d",dna[j] >> "t_xplor1.inp"
+  g=g+1;if(g==10){g=0;printf "\n" >> "t_xplor1.inp"}
+                      }
+printf ") loop main\n" >> "t_xplor1.inp"
+printf "\npatch deox reference=nil=(resid \0441) end\n" >> "t_xplor1.inp"
+printf "end loop main\n" >> "t_xplor1.inp"
+           }                
+#}
+printf "write structure output=t1.psf end\n\nstop\n" >> "t_xplor1.inp"
+
+nn=0
+print_H5T()
+for(i=1;i<=length(seq);i++){
+res=substr(seq,i,1);
+jp=1;if(i==1){jp=kp}
+for(j=jp;j<=count[res];j++){
+  name=Ato[res][j];n=0
+  for(k=start[i];k<start[i+1];k++){
+  if(name_at[k]==name){n=k}}
+  if(n!=0){nn=nn+1
+     printf "ATOM%7d %s%3s  %4d    %8.3f%8.3f%8.3f  1.00  0.00      STRA\n",nn,name,res_xplor[res],i,x[n],y[n],z[n]
+          }else{printf "ERROR brak %s w reszcie %d\n",name,i}
+                          }
+                           }
+print_H3T()
+}' $1

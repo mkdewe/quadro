@@ -1,0 +1,18 @@
+# Line-ending policy.
+#
+# Host-side shell scripts must stay LF: a clone on Windows with
+# core.autocrlf=true would otherwise give them CRLF, and bash rejects the
+# shebang line. Inputs must stay LF because the engine's awk parser treats a
+# trailing \r as part of the field value (a 15-residue sequence then fails with
+# "ERROR 2 : invalid residue at 16").
+*.sh    text eol=lf
+*.inp   text eol=lf
+*.md    text eol=lf
+*.cff   text eol=lf
+*.json  text eol=lf
+Dockerfile text eol=lf
+
+# The engine is kept exactly as delivered by its author, CRLF and all. The
+# container runs dos2unix over it at build time, so the line endings here are
+# provenance, not a functional requirement — do not let git renormalise them.
+engine/** -text

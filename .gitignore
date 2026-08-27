@@ -1,0 +1,38 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Third-party software that MAY NOT be redistributed.
+#
+# CYANA 2.1  — commercial licence (Peter Güntert). Licence §4 forbids disclosing
+#              the software to third parties.
+# Xplor-NIH  — free for non-profit institutions, but README-LICENSE likewise
+#              forbids disclosing the software or documentation to third parties.
+#
+# Both must be obtained by each user under their own licence and dropped into
+# third_party/ locally. See docs/THIRD-PARTY.md.
+#
+# Never remove these rules. If you ever need to check that nothing leaked, run
+#   tools/check-third-party.sh --audit
+# ─────────────────────────────────────────────────────────────────────────────
+third_party/cyana-2.1/*
+!third_party/cyana-2.1/.gitkeep
+third_party/xplor-nih-2.39/*
+!third_party/xplor-nih-2.39/.gitkeep
+
+# Run artefacts
+work/
+out/
+out-*/
+*.pdb
+*_energy.txt
+*.runlog
+
+# …except the committed reference results. The energy file carries Etotal,
+# which is the figure a reader compares against, so it has to be tracked too.
+!examples/reference/*.pdb
+!examples/reference/*_energy.txt
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+*~
+.idea/
+.vscode/

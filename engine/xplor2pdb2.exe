@@ -1,0 +1,31 @@
+awk 'BEGIN{w["GUA"]="  G";w["ADE"]="  A";w["URI"]="  U";w["CYT"]="  C";w[THY]="  T"}
+{if($1=="ATOM"){
+      s=substr($0,18,9);chain=substr($NF,length($NF),1)
+      if((s!=sp)||(chain!=chainp)){liat=liat+1;sp=s;chainp=chain;nres=nres+1;start[nres]=liat
+                name_res[nres]=substr($0,18,3);name_chain[nres]=chain
+                                  }else{liat=liat+1}
+      typ[liat]=$1;opis[liat]=substr($0,23,50);element[liat]=substr($3,1,1)
+      name_at[liat]=substr($0,13,4)
+               }else{
+if($1=="REMARK"){print}
+                    }
+#      g=w[substr($0,18,3)]
+#      printf "%s%s %s%s    %s  \n",substr($0,1,17),g,substr($NF,4,1),substr($0,23,50),substr($3,1,1)
+}
+END{
+nres=nres+1;start[nres]=liat+1
+for(i=1;i<nres;i++){no2p=0;nho2p=0;nh2pp=0
+ for(j=start[i];j<start[i+1];j++){
+  if(name_at[j]=="H2\047\047"){nh2pp=j}
+  if(name_at[j]=="HO2\047"){nho2p=j}
+  if(name_at[j]==" O2\047"){no2p=j}
+  if(name_at[j]==" H5T"){name_at[j]="HO5\047"}
+  if(name_at[j]==" H3T"){name_at[j]="HO3\047"}
+                                 }
+res=substr(name_res[i],1,1)
+if((no2p==0)&&(nho2p==0)&&(nh2pp!=0)){res="D"res}
+ for(j=start[i];j<start[i+1];j++){
+printf "%-6s%5d %s %3s %s%-56s%s  \n",typ[j],j,name_at[j],res,name_chain[i],opis[j],element[j]
+                                 }
+                   }
+}' $1

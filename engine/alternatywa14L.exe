@@ -1,0 +1,63 @@
+awk 'BEGIN{
+fi=ARGV[1]
+k=index(fi,".");fi_name=substr(fi,1,k-1);fi_ext=substr(fi,k+1);fo=fi_name"_alt."fi_ext
+fo_lista="lista_"fi_name".txt";fo_exe="lista_"fi_name".exe"
+#print fo_lista,fo_exe
+printf"">fo
+printf"">fo_lista
+         }
+{li=li+1
+if(NF==0){linia[li]=""}else{
+if(substr($0,1,1)!="#"){
+  if($1=="name"){k=index($2,".")
+     if(k==0){name=$2"_alt"}
+         else{name=substr($2,1,k-1)".alt_"substr($2,k+1)}
+     linia[li]=$1"\t\t"name;print linia[li]>>fo
+                }else{
+  if($1=="orient"){n=split($2,A,";")
+       orient=substr(A[1],1,1);if(substr(A[1],2,1)=="+"){orient=orient"-"}else{orient=orient"+"}
+       for(i=2;i<=n;i++){
+       orient=orient";"substr(A[i],1,1);if(substr(A[i],2,1)=="+"){orient=orient"-"}else{orient=orient"+"}
+                        }
+     linia[li]=$1"\t\t"orient;print linia[li]>>fo
+                  }else{
+  if($1=="rise"){if(index($2,";")==0){
+       if(substr($2,1,1)=="-"){rise=substr($2,2)}else{if(substr($2,1,1)=="+"){rise="-"substr($2,2)}else{rise="-"$2}}
+                                     }else{n=split($2,A,";")
+       if(substr(A[1],1,1)=="-"){rise=substr(A[1],2)}else{if(substr(A[1],1,1)=="+"){rise="-"substr(A[1],2)}else{rise="-"A[1]}}
+       for(i=2;i<=n;i++){
+       if(substr(A[i],1,1)=="-"){rise=rise";"substr(A[i],2)}else{
+                 if(substr(A[i],1,1)=="+"){rise=rise";-"substr(A[i],2)}else{rise=rise";-"A[i]}}
+                        }
+                                          }
+      linia[li]=$1"\t\t"rise;print linia[li]>>fo
+                }else{
+  if($1=="twist"){if(index($2,";")==0){
+     if(substr($2,1,1)=="-"){twist=substr($2,2)}else{if(substr($2,1,1)=="+"){twist="-"substr($2,2)}else{twist="-"$2}}
+                                     }else{n=split($2,A,";")
+     if(substr(A[1],1,1)=="-"){twist=substr(A[1],2)}else{if(substr(A[1],1,1)=="+"){twist="-"substr(A[1],2)}else{twist="-"A[1]}}
+       for(i=2;i<=n;i++){
+       if(substr(A[i],1,1)=="-"){twist=twist";"substr(A[i],2)}else{
+                 if(substr(A[i],1,1)=="+"){twist=twist";-"substr(A[i],2)}else{twist=twist";-"A[i]}}
+                        }
+                                          }
+       linia[li]=$1"\t\t"twist;print linia[li]>>fo
+                }else{
+   if($1=="path"){n=split($2,A,";")
+       path=substr(A[1],1,1);if(substr(A[1],2,1)=="2"){path=path"4"}else{if(substr(A[1],2,1)=="4"){path=path"2"}else{path=path""substr(A[1],2,1)}}
+       for(i=2;i<=n;i++){
+       path=path";"substr(A[i],1,1);if(substr(A[i],2,1)=="2"){path=path"4"}else{if(substr(A[i],2,1)=="4"){path=path"2"}else{path=path""substr(A[i],2,1)}}
+                        }
+       linia[li]=$1"\t\t"path;print linia[li]>>fo
+                  }else{
+     linia[li]=$0;print linia[li]>>fo
+                           }}}}}}}
+}
+END{
+close(fo)
+system("quadro14L.exe "fi)
+system("mv xxx.aco "fi_name".aco")
+system("quadro14L.exe "fo)
+system("mv xxx.aco "fi_name"_alt.aco")
+printf "%s\n%s\n",fo,fi>fo_lista
+}' $1

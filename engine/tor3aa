@@ -1,0 +1,253 @@
+awk 'function torsion (X1, Y1, Z1, X2, Y2, Z2, X3, Y3, Z3, X4, Y4, Z4) {
+             pi = atan2(1,1) * 4;dec2rad=pi/180;rad2dec=180/pi;
+             PX = (X1 - X2);PY = (Y1 - Y2);PZ = (Z1 - Z2);
+             QX = (X3 - X2);QY = (Y3 - Y2);QZ = (Z3 - Z2);
+             RX = (X4 - X2);RY = (Y4 - Y2);RZ = (Z4 - Z2);
+             LNX = (QY * RZ) - (QZ * RY);LNY = (QZ * RX) - (QX * RZ);LNZ = (QX * RY) - (QY * RX);
+             MNX = (QY * PZ) - (QZ * PY);MNY = (QZ * PX) - (QX * PZ);MNZ = (QX * PY) - (QY * PX);
+             ACOS = ((LNX*MNX)+(LNY*MNY)+(LNZ*MNZ))/(((LNX**2+LNY**2+LNZ**2)*(MNX**2+MNY**2+MNZ**2))**(1/2));
+             ASIN = (1 - (ACOS**2))**(1/2);
+             NUCOS = ((MNX*RX)+(MNY*RY)+(MNZ*RZ))/(((MNX**2+MNY**2+MNZ**2)*(RX**2+RY**2+RZ**2))**(1/2));
+             angle = (atan2(ASIN, ACOS)*(180/pi))*(NUCOS/((NUCOS**2)**(1/2)));
+            return angle
+                                                                        }
+     function sugar_parameters (v0, v1, v2, v3, v4) {
+             pi = atan2(1,1) * 4;dec2rad=pi/180;rad2dec=180/pi;
+             wsp=2.0*(sin(36.0*dec2rad)+sin(72.0*dec2rad));
+             num = ((v4 + v1) - (v3 + v0))*dec2rad;
+             den = wsp*v2*dec2rad;
+             SUGAR_PARAMS[1]=atan2( num, den );
+             SUGAR_PARAMS[2]=v2*dec2rad/cos(SUGAR_PARAMS[1]);
+             SUGAR_PARAMS[1]=SUGAR_PARAMS[1]*rad2dec
+             SUGAR_PARAMS[2]=SUGAR_PARAMS[2]*rad2dec
+           return
+                                                    }
+     function code () {
+        h=0;hard=0;hard1=0;
+        c1p=0;c2p=0;c3p=0;c4p=0;c5p=0;o2p=0;o3p=0;o4p=0;o5p=0;ryb=0;dryb=0;term5=0;
+        p=0;o1p=0;o2p=0;fosf=0;
+        n1=0;c2=0;n3=0;c4=0;c5=0;c6=0;base=0;
+        n7=0;c8=0;n9=0;pur=0;
+        o2=0;pyr=0;
+        n2=0;o6=0;gua=0;
+        n6=0;ade=0;
+        o4=0;uri=0;
+        n4=0;cyt=0;
+        for(i=1;i<=NATOM;i++){
+           X=XCOOR[i];Y=YCOOR[i];Z=ZCOOR[i];
+           if(ATOMTYPE[i]!="H"){
+              hard1=hard1+1;hard=hard+1;
+        if((ATOMNAME[i]==" C1\047")||(ATOMNAME[i]==" C1\052")){ryb=ryb+1;c1p=c1p+1;hard1=hard1-1;xc1p=X;yc1p=Y;zc1p=Z}
+        if((ATOMNAME[i]==" C2\047")||(ATOMNAME[i]==" C2\052")){ryb=ryb+1;c2p=c2p+1;hard1=hard1-1;xc2p=X;yc2p=Y;zc2p=Z}
+        if((ATOMNAME[i]==" C3\047")||(ATOMNAME[i]==" C3\052")){pc3p=1;xpc3p=xc3p;ypc3p=yc3p;zpc3p=zc3p;
+                                                               ryb=ryb+1;c3p=c3p+1;hard1=hard1-1;xc3p=X;yc3p=Y;zc3p=Z}
+        if((ATOMNAME[i]==" C4\047")||(ATOMNAME[i]==" C4\052")){pc4p=1;xpc4p=xc4p;ypc4p=yc4p;zpc4p=zc4p;
+                                                               ryb=ryb+1;c4p=c4p+1;hard1=hard1-1;xc4p=X;yc4p=Y;zc4p=Z}
+        if((ATOMNAME[i]==" C5\047")||(ATOMNAME[i]==" C5\052")){ryb=ryb+1;c5p=c5p+1;hard1=hard1-1;xc5p=X;yc5p=Y;zc5p=Z}
+        if((ATOMNAME[i]==" O3\047")||(ATOMNAME[i]==" O3\052")){
+                                                               po3p=1;xpo3p=xo3p;ypo3p=yo3p;zpo3p=zo3p;
+                                                               ryb=ryb+1;o3p=o3p+1;hard1=hard1-1;xo3p=X;yo3p=Y;zo3p=Z}
+        if((ATOMNAME[i]==" O4\047")||(ATOMNAME[i]==" O4\052")){ryb=ryb+1;o4p=o4p+1;hard1=hard1-1;xo4p=X;yo4p=Y;zo4p=Z}
+        if((ATOMNAME[i]==" O5\047")||(ATOMNAME[i]==" O5\052")){
+                                                               po5p=1;xpo5p=xo5p;ypo5p=yo5p;zpo5p=zo5p;
+                                                               ryb=ryb+1;o5p=o5p+1;hard1=hard1-1;xo5p=X;yo5p=Y;zo5p=Z}
+        if((ATOMNAME[i]==" O2\047")||(ATOMNAME[i]==" O2\052")){ryb=ryb+1;o2p=o2p+1;hard1=hard1-1;xo2p=X;yo2p=Y;zo2p=Z}
+        if(ATOMNAME[i]==" P  "){p=p+1;fosf=fosf+1;hard1=hard1-1;;xpp=xp;ypp=yp;zpp=zp;pp=1;xp=X;yp=Y;zp=Z}
+        if((ATOMNAME[i]==" O1P")||(ATOMNAME[i]==" OP1")){o1p=o1p+1;fosf=fosf+1;hard1=hard1-1}
+        if((ATOMNAME[i]==" O2P")||(ATOMNAME[i]==" OP2")){o2p=o2p+1;fosf=fosf+1;hard1=hard1-1}
+        if(ATOMNAME[i]==" N1 "){n1=n1+1;base=base+1;hard1=hard1-1;xn1=X;yn1=Y;zn1=Z}
+        if(ATOMNAME[i]==" C2 "){c2=c2+1;base=base+1;hard1=hard1-1;xc2=X;yc2=Y;zc2=Z}
+        if(ATOMNAME[i]==" N3 "){n3=n3+1;base=base+1;hard1=hard1-1}
+        if(ATOMNAME[i]==" C4 "){c4=c4+1;base=base+1;hard1=hard1-1;xc4=X;yc4=Y;zc4=Z}
+        if(ATOMNAME[i]==" C5 "){c5=c5+1;base=base+1;hard1=hard1-1}
+        if(ATOMNAME[i]==" C6 "){c6=c6+1;base=base+1;hard1=hard1-1}
+        if(ATOMNAME[i]==" N7 "){n7=n7+1;pur=pur+1;hard1=hard1-1}
+        if(ATOMNAME[i]==" C8 "){c8=c8+1;pur=pur+1;hard1=hard1-1}
+        if(ATOMNAME[i]==" N9 "){n9=n9+1;pur=pur+1;hard1=hard1-1;xn9=X;yn9=Y;zn9=Z}
+        if(ATOMNAME[i]==" O2 "){o2=o2+1;pyr=pyr+1;hard1=hard1-1}
+        if(ATOMNAME[i]==" N2 "){n2=n2+1;gua=gua+1;hard1=hard1-1}
+        if(ATOMNAME[i]==" O6 "){o6=o6+1;gua=gua+1;hard1=hard1-1}
+        if(ATOMNAME[i]==" N6 "){n6=n6+1;ade=ade+1;hard1=hard1-1}
+        if(ATOMNAME[i]==" O4 "){o4=o4+1;uri=uri+1;hard1=hard1-1}
+        if(ATOMNAME[i]==" N4 "){n4=n4+1;cyt=cyt+1;hard1=hard1-1}
+                               }else{h=h+1}        # koniec atomtype!="H"
+                             }                        # koniec for  i=1;i<=NATOM;i++
+        kod="n";
+        RNA=0;
+        if(ryb>=8){
+           RNA=1;
+           if(gua==2){kod="g"}
+           if(ade==1){kod="a"}
+           if(cyt==1){kod="c"}
+           if(uri==1){kod="u"}
+                  }
+        if((hard1==0)&&(ryb==9)&&(base==6)&&(fosf==3)){
+           RNA=1;
+           if((pur==3)&&(pyr==0)){
+              if((gua==2)&&(RESNAM_PREV=="  G")){kod="G"}
+              if((ade==1)&&(RESNAM_PREV=="  A")){kod="A"}
+                                 }
+           if((pur==0)&&(pyr==1)){
+              if((cyt==1)&&(RESNAM_PREV=="  C")){kod="C"}
+              if((uri==1)&&(RESNAM_PREV=="  U")){kod="U"}
+                                 }
+                                                       }
+        return
+                      }
+     function measure () {
+                    printf "\n%5d %s %s %s",NUMRES,ATRES_PREV,RESNAM_PREV,kod
+
+#                   obliczenie kata alpha
+                    if((p==1)&&(o5p==1)&&(c5p==1)){
+                    alpha = torsion(xpo3p,ypo3p,zpo3p,xp,yp,zp,xo5p,yo5p,zo5p,xc5p,yc5p,zc5p)
+#                    if (alpha < 0){alpha = 360 + alpha}
+                     printf " %8.3f",alpha              }else{printf " ........"}
+
+#                   obliczenie kata beta
+                    if((p==1)&&(o5p==1)&&(c5p==1)&&(c4p==1)){
+                    beta = torsion(xp,yp,zp,xo5p,yo5p,zo5p,xc5p,yc5p,zc5p,xc4p,yc4p,zc4p)
+#                    if (beta < 0){beta = 360 + beta}
+                          printf " %8.3f",beta              }else{printf " ........"}
+
+#                   obliczenie kata gamma
+                    if((o5p==1)&&(c5p==1)&&(c4p==1)&&(c3p==1)){
+                    gamma = torsion(xo5p,yo5p,zo5p,xc5p,yc5p,zc5p,xc4p,yc4p,zc4p,xc3p,yc3p,zc3p)
+#                    if (gamma < 0){gamma = 360 + gamma}
+                          printf " %8.3f",gamma              }else{printf " ........"}
+
+#                   obliczenie kata delta
+                    if((c5p==1)&&(c4p==1)&&(c3p==1)&&(o3p==1)){
+                    delta = torsion(xc5p,yc5p,zc5p,xc4p,yc4p,zc4p,xc3p,yc3p,zc3p,xo3p,yo3p,zo3p)
+#                    if (delta < 0){delta = 360 + delta}
+                          printf " %8.3f",delta              }else{printf " ........"}
+
+#                   obliczenie kata nu0
+                    if((c4p==1)&&(o4p==1)&&(c1p==1)&&(c2p==1)){
+                    nu0 = torsion(xc4p,yc4p,zc4p,xo4p,yo4p,zo4p,xc1p,yc1p,zc1p,xc2p,yc2p,zc2p)
+#                    if (nu0 < 0){nu0 = 360 + nu0}
+                          printf " %8.3f",nu0                 }else{printf " ........"}
+
+#                   obliczenie kata nu1
+                    if((o4p==1)&&(c1p==1)&&(c2p==1)&&(c3p==1)){
+                    nu1 = torsion(xo4p,yo4p,zo4p,xc1p,yc1p,zc1p,xc2p,yc2p,zc2p,xc3p,yc3p,zc3p)
+#                    if (nu1 < 0){nu1 = 360 + nu1}
+                          printf " %8.3f",nu1              }else{printf " ........"}
+
+#                   obliczenie kata nu2
+                    if((c1p==1)&&(c2p==1)&&(c3p==1)&&(c4p==1)){
+                    nu2 = torsion(xc1p,yc1p,zc1p,xc2p,yc2p,zc2p,xc3p,yc3p,zc3p,xc4p,yc4p,zc4p)
+#                    if (nu2 < 0){nu2 = 360 + nu2}
+                          printf " %8.3f",nu2              }else{printf " ........"}
+
+#                   obliczenie kata nu3
+                    if((c2p==1)&&(c3p==1)&&(c4p==1)&&(o4p==1)){
+                    nu3 = torsion(xc2p,yc2p,zc2p,xc3p,yc3p,zc3p,xc4p,yc4p,zc4p,xo4p,yo4p,zo4p)
+#                    if (nu3 < 0){nu3 = 360 + nu3}
+                          printf " %8.3f",nu3              }else{printf " ........"}
+
+#                   obliczenie kata nu4
+                    if((c3p==1)&&(c4p==1)&&(o4p==1)&&(c1p==1)){
+                    nu4 = torsion(xc3p,yc3p,zc3p,xc4p,yc4p,zc4p,xo4p,yo4p,zo4p,xc1p,yc1p,zc1p)
+#                    if (nu4 < 0){nu4 = 360 + nu4}
+                          printf " %8.3f",nu4              }else{printf " ........"}
+
+#                   obliczenie kata P i vmax
+                    if((c1p==1)&&(c2p==1)&&(c3p==1)&&(c4p==1)&&(o4p==1)){
+                       sugar_parameters(nu0,nu1,nu2,nu3,nu4)
+                          printf " %8.3f %8.3f",SUGAR_PARAMS[1],SUGAR_PARAMS[2] }else{printf " ........ ........"}
+
+#                   obliczenie kata chi
+                    chi=999;
+                    if((o4p==1)&&(c1p==1)){
+                            if((n9==1)&&(c4==1)){chi=torsion(xo4p,yo4p,zo4p,xc1p,yc1p,zc1p,xn9,yn9,zn9,xc4,yc4,zc4)}
+                            else{if((n1==1)&&(c2==1)){chi=torsion(xo4p,yo4p,zo4p,xc1p,yc1p,zc1p,xn1,yn1,zn1,xc2,yc2,zc2)}}
+                                          }
+                    if(chi!=999){printf " %8.3f",chi}else{printf " ........"}
+                    return
+                           }
+
+     BEGIN{input=ARGV[1];printf "input: %s\n",input
+         printf "                     alpha     beta    gamma    delta     nu0      nu1      nu2      nu3      nu4       P      vmax      chi      epsi     zeta\n"
+         NATOM = 0; RNA = 0; NUMRES = 0; TOTAL_NUMRES=0; TOTAL_NUMCH=0;
+         ATRES_PREV="______";CHN_PREV="_";
+          }
+     {if((/^MODEL/)||(/^END/)||(/^TER/)){if(NATOM>0){code()
+                                           if(RNA==1){
+                                           NUMRES=NUMRES+1;
+#                    if(RNA_PREV==1){
+#                                   if(CHN==CHN_PREV){printf " %8.3f %8.3f",epsi,zeta}else{printf " ........ ........"}
+#                                   }
+                    if((RNA_PREV==1)&&(NUMRES>1)){
+                                   epsi = torsion(xpc4p,ypc4p,zpc4p,xpc3p,ypc3p,zpc3p,xpo3p,ypo3p,zpo3p,xp,yp,zp)
+                                   zeta = torsion(xpc3p,ypc3p,zpc3p,xpo3p,ypo3p,zpo3p,xp,yp,zp,xo5p,yo5p,zo5p)
+                                   if(CHN==CHN_PREV){printf " %8.3f %8.3f",epsi,zeta}
+                                   }
+
+                                           measure();
+                                           printf " ........ ........\n"};
+                  NATOM = 0; RNA = 0; NUMRES = 0; TOTAL_NUMRES=0; TOTAL_NUMCH=0;
+                  ATRES_PREV="______";CHN_PREV="_";
+                                          }
+                  }
+      if(/^MODEL/){print}
+      if ((/^ATOM/)||(/^HETATM/)){
+          RESNAM = substr($0, 18, 3);
+          ATRES = substr($0, 22, 6); TYPE_ATOM = substr($0, 78, 1);
+          XC=strtonum(substr($0,31,8));
+          YC=strtonum(substr($0,39,8));
+          ZC=strtonum(substr($0,47,8));
+          NAME_ATOM = substr($0, 13, 4);
+#          if((NAME_ATOM==" O3\047")||(NAME_ATOM==" O3\052")){xpo3p=xo3p;ypo3p=yo3p;zpo3p=zo3p}
+#          if((NAME_ATOM==" P  ")&&(RNA==1)){
+#                  RNA_PREV=1;
+#                  nextp=1;xnextp=XC;ynextp=YC;znextp=ZC;
+#               if((c4p==1)&&(c3p==1)&&(o3p==1)&&(nextp==1)){
+#                   epsi = torsion(xc4p,yc4p,zc4p,xc3p,yc3p,zc3p,xo3p,yo3p,zo3p,xnextp,ynextp,znextp)
+#                   if (epsi < 0){epsi = 360 + epsi}
+#                   printf " %8.3f",epsi              }else{printf " ........"}
+#                           textepsi=epsi}else{textepsi=" ........"}
+#                                printf "__________________________\n"
+#                               }
+#          if((NAME_ATOM==" O5\047")||(NAME_ATOM==" O5\052")){nexto5p=1;xnexto5p=XC;ynexto5p=YC;znexto5p=ZC;
+#                                                            if((c3p==1)&&(o3p==1)&&(nextp==1)){
+#                                                            zeta=torsion(xc3p,yc3p,zc3p,xo3p,yo3p,zo3p,xnextp,ynextp,znextp,xnexto5p,ynexto5p,znexto5p)
+#                                                                                              }
+#                                                            }
+        if(ATRES!=ATRES_PREV){
+            TOTAL_NUMRES=TOTAL_NUMRES+1;CHN=substr($0,22,1);
+            if(NATOM>0){code()
+        if(RNA==1){ NUMRES=NUMRES+1;
+                    if((RNA_PREV==1)&&(NUMRES>1)){
+                                   epsi = torsion(xpc4p,ypc4p,zpc4p,xpc3p,ypc3p,zpc3p,xpo3p,ypo3p,zpo3p,xp,yp,zp)
+                                   zeta = torsion(xpc3p,ypc3p,zpc3p,xpo3p,ypo3p,zpo3p,xp,yp,zp,xo5p,yo5p,zo5p)
+                                   if(CHN==CHN_PREV){printf " %8.3f %8.3f",epsi,zeta}
+                                   }
+                    measure();
+
+
+#                    printf "%5d %s %s %8.3f\n",NUMRES,ATRES_PREV,kod,beta
+                     RNA_PREV=1
+                  }else{RNA_PREV=0}
+                             }else{RNA_prev=0}
+                    NATOM=1;ATOMNAME[NATOM]=NAME_ATOM;ATOMTYPE[NATOM]=TYPE_ATOM;RES_NAME[NATOM]=ATRES;XCOOR[NATOM]=XC;YCOOR[NATOM]=YC;ZCOOR[NATOM]=ZC;
+                    ATRES_PREV=ATRES;RESNAM_PREV=RESNAM;CHN_PREV=CHN;
+                    if(NAME_ATOM==" P  "){netxp=1}else{nextp=0}
+                    if((NAME_ATOM==" O5\047")||(NAME_ATOM==" O5\052")){netxo4p=1}else{netxo5p=0}
+                                           }                       # koniec ATRES!=ATRES_PREV
+                    else{NATOM=NATOM+1;ATOMNAME[NATOM]=NAME_ATOM;ATOMTYPE[NATOM]=TYPE_ATOM;RES_NAME[NATOM]=ATRES;XCOOR[NATOM]=XC;YCOOR[NATOM]=YC;ZCOOR[NATOM]=ZC}
+# A                                                                                                                  }
+                                 }
+     }
+     END{if(NUMRES>0){printf " ........ ........"};printf "\nEND\n\n"
+# ATOM     33  O5*   G A   2      -7.189  -2.090   6.478  1.00  0.00           O
+# ATOM     34  C5*   G A   2      -8.517  -1.722   6.833  1.00  0.00           C
+# ATOM     35  C4*   G A   2      -8.559  -0.259   7.314  1.00  0.00           C
+# ATOM     36  O4*   G A   2      -7.780  -0.058   8.501  1.00  0.00           O
+# ATOM     37  C3*   G A   2      -8.006   0.720   6.285  1.00  0.00           C
+# ATOM     38  O3*   G A   2      -8.996   0.947   5.257  1.00  0.00           O
+# ATOM     39  C2*   G A   2      -7.627   1.925   7.185  1.00  0.00           C
+# ATOM     40  O2*   G A   2      -8.728   2.801   7.404  1.00  0.00           O
+# ATOM     41  C1*   G A   2      -7.207   1.257   8.508  1.00  0.00           C
+        }' $1
+
+

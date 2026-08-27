@@ -1,0 +1,11 @@
+# The build context is the repository root, but CYANA and Xplor-NIH are supplied
+# through *named build contexts* (--build-context cyana=… / xplor=…), so the
+# 1.4 GB in third_party/ must never be uploaded as part of the default context.
+third_party/
+
+.git/
+docs/
+examples/reference/
+work/
+out/
+*.md
