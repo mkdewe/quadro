@@ -176,12 +176,10 @@ Polish): **[docs/INPUT-FORMAT.md](docs/INPUT-FORMAT.md)**.
 **[docs/ALGORITHM.md](docs/ALGORITHM.md)** describes each stage, with the
 relevant lines of the engine quoted.
 
-### The first two stages, animated
-
 **Stage 1 — ideal tetrad geometry.** Tetrad polarity, the pseudo-atoms and the
 rotation about the N9–C1′ bond, the pseudo-residue **Q**, and the stacking of
 three tetrads by `translate z` and `rotation z` — that is, by `rise` and
-`twist`. Shown at 6× speed;
+`twist`. Shown at 5.8× speed;
 [the full film is here](docs/media/stage1-tetrad-geometry.mp4).
 
 ![Stage 1 — building the pseudo-residue Q and stacking three tetrads](docs/media/stage1-tetrad-geometry.webp)
