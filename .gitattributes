@@ -12,6 +12,14 @@
 *.json  text eol=lf
 Dockerfile text eol=lf
 
+# Media are binary. Git's heuristics would almost certainly get this right on
+# their own, but a mangled byte in a video is invisible until someone tries to
+# play it, so say so explicitly.
+*.mp4   -text -diff
+*.webp  -text -diff
+*.png   -text -diff
+*.gif   -text -diff
+
 # The engine is kept exactly as delivered by its author, CRLF and all. The
 # container runs dos2unix over it at build time, so the line endings here are
 # provenance, not a functional requirement — do not let git renormalise them.

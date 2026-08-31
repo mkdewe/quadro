@@ -176,6 +176,27 @@ Polish): **[docs/INPUT-FORMAT.md](docs/INPUT-FORMAT.md)**.
 **[docs/ALGORITHM.md](docs/ALGORITHM.md)** describes each stage, with the
 relevant lines of the engine quoted.
 
+### The first two stages, animated
+
+**Stage 1 — ideal tetrad geometry.** Tetrad polarity, the pseudo-atoms and the
+rotation about the N9–C1′ bond, the pseudo-residue **Q**, and the stacking of
+three tetrads by `translate z` and `rotation z` — that is, by `rise` and
+`twist`. Click through for the full 2-minute film:
+
+[![Stage 1 — building the pseudo-residue Q and stacking three tetrads](docs/media/stage1-tetrad-geometry.png)](docs/media/stage1-tetrad-geometry.mp4)
+
+**Stage 2 — build-up in torsion space.** From the bare quadruplex core to the
+final structure, one fragment at a time. Note the `path` bar along the top: it
+highlights each token as that residue is added, which is what makes `path` a
+parameter of the method rather than bookkeeping. Shown at 4× speed;
+[the full film is here](docs/media/stage2-torsion-buildup.mp4).
+
+![Stage 2 — multi-stage minimisation in torsion-angle space, fragment by fragment](docs/media/stage2-torsion-buildup.webp)
+
+Both films were made for **G4Composer**, the web application built on this
+engine, so they label the `orient` field `Polarity`; the vocabulary is
+reconciled in [docs/media/README.md](docs/media/README.md#a-note-on-vocabulary).
+
 ---
 
 ## Repository layout
@@ -184,7 +205,8 @@ relevant lines of the engine quoted.
 engine/         the engine and its data libraries — copied verbatim into the image
 docker/         Dockerfile and container entrypoint
 tools/          build / run / dependency-check wrappers
-docs/           input format, algorithm, third-party setup, troubleshooting
+docs/           input format, algorithm, third-party setup
+docs/media/     animations of the first two stages
 examples/       example inputs and reference outputs
 third_party/    empty — you install CYANA and Xplor-NIH here
 ```
