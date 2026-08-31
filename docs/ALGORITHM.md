@@ -30,9 +30,9 @@ the requested handedness and spacing.
 Loops and any dot-bracket duplex regions in `structure` are not placed here —
 they are grown in stage 2.
 
-> 🎞 Animated: [`media/stage1-tetrad-geometry.mp4`](media/stage1-tetrad-geometry.mp4)
-> — polarity, the pseudo-residue **Q**, and three tetrads stacked by explicit
-> `translate z` / `rotation z` operations.
+This stage is shown in [`media/stage1-tetrad-geometry.mp4`](media/stage1-tetrad-geometry.mp4):
+polarity, the pseudo-residue **Q**, and three tetrads stacked by explicit
+`translate z` and `rotation z` operations.
 
 ## Stage 2 — build-up in torsion space (CYANA)
 
@@ -45,9 +45,9 @@ restraints:
 printf "minimize %d\n", iteration > FO_INIT     # once per build-up stage
 ```
 
-> 🎞 Animated: [`media/stage2-torsion-buildup.mp4`](media/stage2-torsion-buildup.mp4)
-> — the whole build-up, stage by stage, with the `path` bar highlighting each
-> token as its residue is added.
+This stage is shown in [`media/stage2-torsion-buildup.mp4`](media/stage2-torsion-buildup.mp4):
+the whole build-up, stage by stage, with the `path` bar highlighting each token
+as its residue is added.
 
 Working in torsion space rather than Cartesian space is what makes this
 tractable: bond lengths and angles stay at ideal values by construction, so only

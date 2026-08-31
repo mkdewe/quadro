@@ -84,18 +84,19 @@ docker run --rm -v "$PWD:/work" quadro14l:latest --help
 ## Input
 
 One plain-text `.inp` file per structure — `keyword value`, one per line, order
-irrelevant. This is `examples/6a-1hap_js12B.inp`, a two-tetrad antiparallel DNA
-G-quadruplex:
+irrelevant. This is `examples/6pnk.inp`, the three-tetrad DNA G-quadruplex used
+in the animations above:
 
 ```
-name        1hap_js12B_100
-sequence    ggttggtgtggttgg
-structure   AB..BA...AB..BA
-chi         S...S....S...S.
-orient      A+;B-
-rise        3.4
-twist       19
-path        A1;B1;B4;A4;A3;B3;B2;A2
+name        6pnk
+sequence    gggtgggttgggttggg
+structure   ^^^.^^^..^^^..^^^
+chi         .................
+sugar       SSSSSSNSSSSSNSNSS
+orient      A-;B-;C-
+rise        3.3;3.4
+twist       33.3;24.2
+path        A1;B1;C1;A4;B4;C4;A3;B3;C3;A2;B2;C2
 test        y
 rm_level    5
 iteration   100
@@ -103,39 +104,45 @@ iteration   100
 
 Field by field:
 
-**`name`** — base name for the output. This run writes `1hap_js12B_100.pdb` and
-`1hap_js12B_100_energy.txt`.
+**`name`** — base name for the output. This run writes `6pnk.pdb` and
+`6pnk_energy.txt`.
 
 **`sequence`** — the nucleotides. **Case selects the sugar, not the base:**
 uppercase `ACGU` is RNA (ribose), lowercase `acgt` is DNA (deoxyribose). Mixing
 them gives a chimeric molecule. Note the asymmetry — thymine is always lowercase
 `t`, uracil always uppercase `U`; uppercase `T` and lowercase `u` are rejected.
 
-**`structure`** — which residues form tetrads. Same length as `sequence`.
-Uppercase letters mark tetrad residues and name the column each one sits in
-(`A` and `B` here, so two columns of four); `.` is an unpaired loop or overhang.
-Dot-bracket characters `()[]{}<>` may also appear, for canonical base pairs in a
-duplex region. A `^` notation exists as an alternative for large structures.
+**`structure`** — which residues form tetrads. Same length as `sequence`. Two
+notations exist, and the presence of a `^` anywhere selects between them. Here
+each `^` marks a tetrad residue and the column assignment is taken entirely
+from `path`; the alternative is to write the column letter (`A`, `B`, `C`) in
+place of each `^`. `.` is an unpaired loop or overhang, and dot-bracket
+characters `()[]{}<>` may also appear, for canonical base pairs in a duplex
+region.
 
 **`chi`** — glycosidic torsion per residue: `S` *syn*, `A` *anti*, `.` let the
-engine decide. Here the first residue of each column is held *syn*, which is
-what makes the quadruplex antiparallel.
+engine decide. All dots here, so the engine chooses throughout.
+
+**`sugar`** — sugar pucker per residue: `N` North (C3′-endo, RNA-like), `S`
+South (C2′-endo, DNA-like), `.` the default for that residue's sugar type. Omit
+the line to accept the defaults everywhere.
 
 **`orient`** — hydrogen-bond directionality, one entry per tetrad, in tetrad
-order. `A+` is Watson-Crick/Hoogsteen, `B-` is Hoogsteen/Watson-Crick. The
-letter must match the tetrad's position: `A` for the first, `B` for the second.
+order — three tetrads here, all `-`. `+` is Watson-Crick/Hoogsteen, `-` is
+Hoogsteen/Watson-Crick. The letter must match the tetrad's position: `A` for the
+first, `B` for the second, `C` for the third.
 
 **`rise`** — vertical spacing between stacked tetrads, in ångströms. One value,
-or one per step: `3.4;3.3`.
+or one per step, as here: `3.3` between tetrads A and B, `3.4` between B and C.
 
-**`twist`** — rotation between stacked tetrads, in degrees. Same multi-value
+**`twist`** — rotation between stacked tetrads, in degrees. Same per-step
 syntax. Roughly 30° for parallel stacks, 15–20° for antiparallel.
 
 **`path`** — **the build-up order, and a real parameter of the method.** The
 molecule is assembled one residue at a time in exactly this sequence, with a
-CYANA minimisation after each. `4 × number of tetrads` entries; each group of
-four must complete one tetrad. The same topology built in a different order is
-a different calculation with a different result.
+CYANA minimisation after each. `4 × number of tetrads` entries — twelve here;
+each group of four must complete one tetrad. The same topology built in a
+different order is a different calculation with a different result.
 
 **`test`** — `y` keeps the engine verbose and preserves diagnostic output; `n`
 for production runs.
@@ -151,9 +158,9 @@ regardless. More is therefore not monotonically better: a deeper build-up fixes
 some structures and breaks others. The useful move is to run several depths and
 keep the lowest `Etotal`.
 
-Full reference, including the `^` notation, the optional `sugar` and
-`my_angles` fields and a translated error table (engine messages are in
-Polish): **[docs/INPUT-FORMAT.md](docs/INPUT-FORMAT.md)**.
+Full reference, including the labelled `structure` notation, the optional
+`my_angles` and `iteration_steps` fields and a translated error table (engine
+messages are in Polish): **[docs/INPUT-FORMAT.md](docs/INPUT-FORMAT.md)**.
 
 ---
 
@@ -179,22 +186,19 @@ relevant lines of the engine quoted.
 **Stage 1 — ideal tetrad geometry.** Tetrad polarity, the pseudo-atoms and the
 rotation about the N9–C1′ bond, the pseudo-residue **Q**, and the stacking of
 three tetrads by `translate z` and `rotation z` — that is, by `rise` and
-`twist`. Shown at 5.8× speed;
-[the full film is here](docs/media/stage1-tetrad-geometry.mp4).
+`twist`.
 
 ![Stage 1 — building the pseudo-residue Q and stacking three tetrads](docs/media/stage1-tetrad-geometry.webp)
 
 **Stage 2 — build-up in torsion space.** From the bare quadruplex core to the
-final structure, one fragment at a time. Note the `path` bar along the top: it
-highlights each token as that residue is added, which is what makes `path` a
-parameter of the method rather than bookkeeping. Shown at 4× speed;
-[the full film is here](docs/media/stage2-torsion-buildup.mp4).
+final structure, one fragment at a time. The `path` bar along the top
+highlights each token as its residue is added.
 
 ![Stage 2 — multi-stage minimisation in torsion-angle space, fragment by fragment](docs/media/stage2-torsion-buildup.webp)
 
-Both films were made for **G4Composer**, the web application built on this
-engine, so they label the `orient` field `Polarity`; the vocabulary is
-reconciled in [docs/media/README.md](docs/media/README.md#a-note-on-vocabulary).
+Both animations run at 5× speed. The source films, and the mapping between
+their G4Composer interface labels and the `.inp` keywords, are in
+[docs/media/](docs/media/).
 
 ---
 
