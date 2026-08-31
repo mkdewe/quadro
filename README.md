@@ -181,9 +181,10 @@ relevant lines of the engine quoted.
 **Stage 1 — ideal tetrad geometry.** Tetrad polarity, the pseudo-atoms and the
 rotation about the N9–C1′ bond, the pseudo-residue **Q**, and the stacking of
 three tetrads by `translate z` and `rotation z` — that is, by `rise` and
-`twist`. Click through for the full 2-minute film:
+`twist`. Shown at 6× speed;
+[the full film is here](docs/media/stage1-tetrad-geometry.mp4).
 
-[![Stage 1 — building the pseudo-residue Q and stacking three tetrads](docs/media/stage1-tetrad-geometry.png)](docs/media/stage1-tetrad-geometry.mp4)
+![Stage 1 — building the pseudo-residue Q and stacking three tetrads](docs/media/stage1-tetrad-geometry.webp)
 
 **Stage 2 — build-up in torsion space.** From the bare quadruplex core to the
 final structure, one fragment at a time. Note the `path` bar along the top: it

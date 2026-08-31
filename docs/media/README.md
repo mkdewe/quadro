@@ -9,8 +9,8 @@ repository.
 |---|---|---|
 | `stage1-tetrad-geometry.mp4` | 1 — ideal tetrad geometry | 2:07 |
 | `stage2-torsion-buildup.mp4` | 2 — build-up in torsion space | 2:03 |
-| `stage2-torsion-buildup.webp` | excerpt of stage 2, for inline display | 0:24 |
-| `stage1-tetrad-geometry.png` | still frame from stage 1, for inline display | — |
+| `stage1-tetrad-geometry.webp` | stage 1 at 6× speed, for inline display | 0:23 |
+| `stage2-torsion-buildup.webp` | excerpt of stage 2 at 4× speed, for inline display | 0:24 |
 
 Both films are 1280×720, silent. GitHub does not play `.mp4` inline in Markdown
 — follow the link and it opens in GitHub's file viewer, which has a player.
@@ -62,19 +62,21 @@ the `^` notation.
 
 ## Regenerating the derived files
 
-The two `.mp4` files are the originals, unmodified. The `.webp` and `.png` are
-derived from them:
+The two `.mp4` files are the originals, unmodified. Both `.webp` files are
+derived from them. Each ends with its last frame held for two seconds, so that
+the loop does not cut off the result it has just built:
 
 ```bash
-# Inline animation: stage 2 from 0:29 to 1:58, 4× faster, 640 px, 10 fps,
-# with the final frame held for two seconds so the loop does not cut it off.
+# Stage 1, whole film at 6× speed.
+ffmpeg -i stage1-tetrad-geometry.mp4 \
+    -vf "setpts=PTS/6,fps=10,scale=900:-1:flags=lanczos,tpad=stop_mode=clone:stop_duration=2" \
+    -loop 0 -q:v 55 stage1-tetrad-geometry.webp
+
+# Stage 2, from 0:29 to 1:58 at 4× speed. The opening seconds are the static
+# quadruplex core, which the still at the top of the film already shows.
 ffmpeg -ss 29 -to 118 -i stage2-torsion-buildup.mp4 \
     -vf "setpts=PTS/4,fps=10,scale=640:-1:flags=lanczos,tpad=stop_mode=clone:stop_duration=2" \
     -loop 0 -q:v 50 stage2-torsion-buildup.webp
-
-# Still frame from stage 1.
-ffmpeg -ss 118 -i stage1-tetrad-geometry.mp4 -frames:v 1 -vf "scale=900:-1" \
-    stage1-tetrad-geometry.png
 ```
 
 Animated WebP is used rather than GIF because it is roughly seven times smaller
