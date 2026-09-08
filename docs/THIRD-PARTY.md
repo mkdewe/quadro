@@ -39,7 +39,7 @@ Then:
 ```bash
 tools/check-third-party.sh     # fails with a pointer back here if anything is missing
 tools/build.sh                 # builds the image
-tools/run.sh --outdir out examples/pz74.inp
+tools/run.sh --outdir out examples/7ys7.inp
 ```
 
 That is the whole procedure. The image does the rest itself: installs the

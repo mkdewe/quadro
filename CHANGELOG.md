@@ -44,6 +44,19 @@ reference in scripts and documentation.
 - `cyana2xplor14L.exe` is gone. Its thymine methyl-hydrogen fix is merged into
   `cyana2xplor.exe`, which is now the only converter.
 
+### Examples
+
+- `examples/7ys7.inp` replaces `examples/pz74.inp` as the example the
+  documentation and the `tools/*.sh` banners point at. It exercises far more of
+  the input format in one file — mixed tetrad polarity (`A-;B+;C-`), a negative
+  `rise` next to a positive one, a negative `twist`, per-residue `chi` and
+  `sugar`, and a `path` that does not fill its columns in sequence order — and
+  it is the one example whose *unmirrored* reading wins, which the other two
+  would otherwise make look like a rule.
+- `pz74.inp` and `pz74-rm0.inp` are removed with it. Dot-bracket duplex syntax
+  is still documented in `docs/INPUT-FORMAT.md` but no longer has a worked
+  example.
+
 ### Removed
 
 - **`iteration_steps`** was a local patch on 14L and is not part of 14M. Inputs

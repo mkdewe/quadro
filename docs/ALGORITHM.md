@@ -149,12 +149,12 @@ out/1hap_js12B_100_energy.txt
 out/1hap_js12B_100_alt_energy.txt
 ```
 
-Here the mirror is favoured by 9.6. How large a margin is meaningful depends on
-the structure: for `examples/6pnk.inp` the two readings sit 1.8 apart and do not
-discriminate, while for `examples/pz74.inp` they sit 38 apart and do.
-(Xplor-NIH does not label the units in `<name>_energy.txt`; treat `Etotal` as a
-relative figure for ranking models of the same sequence, not as an absolute
-quantity.)
+Here the mirror is favoured by 9.6. Neither the direction nor the size of that
+margin is a general result: `examples/7ys7.inp` goes the other way, the input as
+written winning by 18.9, and `examples/6pnk.inp` produces two readings 1.8 apart
+that settle nothing. (Xplor-NIH does not label the units in
+`<name>_energy.txt`; treat `Etotal` as a relative figure for ranking models of
+the same sequence, not as an absolute quantity.)
 
 `--no-mirror` skips the second pass. It halves the run time and gives up the
 comparison, which is worth doing only when the handedness is already settled.

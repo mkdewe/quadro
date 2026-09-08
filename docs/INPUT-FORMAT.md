@@ -68,8 +68,19 @@ strand-like stack) the residue sits in. Everything else is a non-tetrad residue:
 
 **(b) Caret notation** — at least one `^` present. Every `^` marks a tetrad
 residue and the column assignment is taken entirely from `path`. Convenient for
-large structures where letter bookkeeping is error-prone. `examples/pz74.inp`
-uses this together with a dot-bracket duplex:
+large structures where letter bookkeeping is error-prone. `examples/7ys7.inp`
+uses it for a three-tetrad quadruplex whose columns are not filled in sequence
+order:
+
+```
+sequence    ggggcggggcggggcggggt
+structure   ^^....^^^.^^^..^^^^.
+path        A1;B1;B3;A3;C3;B2;A2;C2;C1;B4;A4;C4
+```
+
+The two notations mix freely with dot-bracket pairs, so a quadruplex embedded in
+a duplex stem is written like this — carets for the tetrads, brackets for the
+paired stem:
 
 ```
 structure   (((((((((((^^.^^.((...))^^.^^.)))))))))))

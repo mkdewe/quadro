@@ -1,0 +1,12 @@
+name       7ys7
+sequence   ggggcggggcggggcggggt
+structure  ^^....^^^.^^^..^^^^.
+chi        S...S.S...S....S....
+sugar      NNSSSSSSSSNNSSSNNNNN
+orient     A-;B+;C-
+rise       -3.8;6.7
+twist      -24.8;54.3
+path       A1;B1;B3;A3;C3;B2;A2;C2;C1;B4;A4;C4
+test       n
+rm_level   0
+iteration  100

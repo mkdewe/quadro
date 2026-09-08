@@ -64,4 +64,4 @@ DOCKER_BUILDKIT=1 docker buildx build \
 
 echo
 echo "Built $TAG. Try it:"
-echo "  docker run --rm -v \"\$PWD:/work\" $TAG examples/pz74.inp"
+echo "  docker run --rm -v \"\$PWD:/work\" $TAG examples/7ys7.inp"

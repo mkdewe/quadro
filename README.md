@@ -63,11 +63,11 @@ out/1hap_js12B_100_energy.txt
 out/1hap_js12B_100_alt_energy.txt
 ```
 
-The lower `Etotal` identifies the favoured handedness. How large a margin means
-anything depends on the structure: 9.6 here, 1.8 for `examples/6pnk.inp` — which
-settles nothing — and 38 for `examples/pz74.inp`, which settles it. The
-transformation is specified in
-[docs/ALGORITHM.md](docs/ALGORITHM.md#the-mirror-pass).
+The lower `Etotal` identifies the favoured handedness — here the mirror, by 9.6.
+Which way it goes is a property of the structure, not a rule: for
+`examples/7ys7.inp` the input as written wins by 18.9, and for
+`examples/6pnk.inp` the two sit 1.8 apart and settle nothing. The transformation
+is specified in [docs/ALGORITHM.md](docs/ALGORITHM.md#the-mirror-pass).
 
 Pass `--no-mirror` to build only the input as written. It halves the run time
 and gives up the comparison.
@@ -75,7 +75,7 @@ and gives up the comparison.
 Without the wrappers:
 
 ```bash
-docker run --rm -v "$PWD:/work" quadro14m:latest examples/pz74.inp
+docker run --rm -v "$PWD:/work" quadro14m:latest examples/7ys7.inp
 docker run --rm -v "$PWD:/work" quadro14m:latest --help
 ```
 

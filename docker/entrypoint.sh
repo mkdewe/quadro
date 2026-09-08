@@ -42,7 +42,7 @@ OUTPUT
     holding the full engine output.
 
 EXAMPLE
-    docker run --rm -v "\$PWD:/work" quadro14m:latest examples/pz74.inp
+    docker run --rm -v "\$PWD:/work" quadro14m:latest examples/7ys7.inp
 
 SEE ALSO
     docs/INPUT-FORMAT.md for the .inp file format.

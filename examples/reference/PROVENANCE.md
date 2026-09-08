@@ -15,7 +15,7 @@ Regenerate with:
 ```bash
 tools/build.sh
 tools/run.sh --outdir examples/reference \
-    examples/6a-1hap_js12B.inp examples/pz74.inp examples/6pnk.inp
+    examples/6a-1hap_js12B.inp examples/7ys7.inp examples/6pnk.inp
 ```
 
 ## Environment
@@ -39,24 +39,27 @@ stack.
 |---|---|---|---|---|
 | `6a-1hap_js12B.inp` | `1hap_js12B_100.pdb` | 488 | 15 | −620.281 |
 | | `1hap_js12B_100_alt.pdb` | 488 | 15 | **−629.866** |
-| `pz74.inp` | `pz74_mp_70.pdb` | 1313 | 41 | −906.937 |
-| | `pz74_mp_70_alt.pdb` | 1313 | 41 | **−945.249** |
+| `7ys7.inp` | `7ys7.pdb` | 649 | 20 | **−867.460** |
+| | `7ys7_alt.pdb` | 649 | 20 | −848.524 |
 | `6pnk.inp` | `6pnk.pdb` | 555 | 17 | −665.030 |
 | | `6pnk_alt.pdb` | 555 | 17 | **−666.835** |
 
 All six runs completed with no `ERROR` lines in the engine output. The lower
-`Etotal` of each pair is shown in bold; it is the mirrored reading in all three
-cases, which is a property of these particular inputs and not a general result.
+`Etotal` of each pair is shown in bold. It falls to the mirrored reading for
+`6a-1hap_js12B` and `6pnk` and to the input as written for `7ys7`, which is the
+point of building both: the direction is a property of each structure and cannot
+be assumed.
 
 The margins are worth reading carefully. For `6pnk` the two readings are
 1.8 apart on a total near 666, which does not discriminate between them. For
-`pz74` the separation is 38, which does.
+`7ys7` the separation is 18.9, which does.
 
 ## Comparison with 14L
 
-The same three inputs under 14L gave −624.033, −901.663 and −676.819. Atom and
-residue counts are identical, so the two engines build the same molecules; the
-energies are not, and were not expected to be.
+`6a-1hap_js12B.inp` and `6pnk.inp` gave −624.033 and −676.819 under 14L. Atom
+and residue counts are identical, so the two engines build the same molecules;
+the energies are not, and were not expected to be. (`7ys7.inp` has no 14L
+reference — it was added in 14M.)
 
 Two changes in the CYANA stage account for it. 14L re-read the accumulated angle
 file (`read ang Q<n>`) immediately before the closing minimisation and 14M does
