@@ -9,7 +9,7 @@
 #
 #   tools/build.sh                     ← recommended; wraps the call below
 #
-#   DOCKER_BUILDKIT=1 docker build -f docker/Dockerfile -t quadro14l:latest . \
+#   DOCKER_BUILDKIT=1 docker build -f docker/Dockerfile -t quadro14m:latest . \
 #       --build-context cyana=third_party/cyana-2.1 \
 #       --build-context xplor=third_party/xplor-nih-2.39
 #
@@ -18,10 +18,12 @@
 
 FROM ubuntu:22.04
 
-# Which engine this image runs. Bumping quadro to a new version means replacing
-# engine/ and overriding these two — nothing else in the recipe changes.
-ARG QUADRO_EXE=quadro14L.exe
-ARG QUADRO_ALT=alternatywa14L.exe
+# The engine entry point. It is a build argument only so that a fork carrying a
+# differently named engine can override it; the file in engine/ is unversioned
+# on purpose, so bumping quadro means replacing engine/ and nothing else.
+ARG QUADRO_EXE=quadro.exe
+# Reported by `--version` and by /health-style checks. Set from VERSION.
+ARG QUADRO_VERSION=unknown
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -56,19 +58,19 @@ COPY engine/ /opt/bin/
 COPY docker/entrypoint.sh /usr/local/bin/quadro-run
 
 # ── 4. Normalise line endings ────────────────────────────────────────────────
-# The engine and its .cya/.lib data files are authored on Windows and carry
-# CRLF. awk and CYANA both choke on the stray \r. Converting at build time keeps
-# the committed files byte-identical to what the author delivered.
+# The engine is authored on Windows and awk and CYANA both choke on a stray \r.
+# It is committed with LF, so this is a no-op for a clean checkout — it is here
+# for the case that is easy to get wrong: a clone made on Windows with
+# core.autocrlf=true, or a fresh engine dropped in straight from the author.
 RUN find /opt/bin -type f -exec sh -c \
         'file "$1" | grep -qE "text|script" && dos2unix "$1"' _ {} \; 2>/dev/null || true && \
     dos2unix /usr/local/bin/quadro-run && chmod +x /usr/local/bin/quadro-run
 
 # ── 5. Pin the engine's data directory to the working directory ──────────────
-# Some releases carry an absolute DIR="..." path. The engine is always invoked
-# from /opt/bin, where its data files live, so DIR must be "./". Rewriting here
-# rather than in the repo keeps engine/ byte-identical to the delivered source.
-# Releases that already say DIR="./" are left untouched by the regex — the
-# check below covers both.
+# The engine resolves tetrad.lib and friends through DIR, and is always run from
+# a directory that holds them, so DIR must be "./". It already is — but the
+# author's own copies carry an absolute path into a home directory, so the sed
+# rewrites one if it reappears and the grep makes the build fail if it cannot.
 RUN sed -i 's|^DIR="/.*"$|DIR="./"|' "/opt/bin/${QUADRO_EXE}" && \
     grep -q '^DIR="\./"$' "/opt/bin/${QUADRO_EXE}" || \
     { echo "FATAL: could not pin DIR=\"./\" in ${QUADRO_EXE}"; exit 1; }
@@ -92,14 +94,13 @@ RUN cd /opt/bin/cyana-2.1 && \
 
 # ── 8. Permissions ───────────────────────────────────────────────────────────
 RUN chmod -R a+rX /opt/bin && \
-    chmod +x "/opt/bin/${QUADRO_EXE}" "/opt/bin/${QUADRO_ALT}" \
+    chmod +x "/opt/bin/${QUADRO_EXE}" \
              /opt/bin/cyana2xplor.exe /opt/bin/xplor2pdb2.exe \
-             /opt/bin/t2dih.exe /opt/bin/tor3aa 2>/dev/null || true && \
-    chmod +x /opt/bin/cyana2xplor14L.exe 2>/dev/null || true
+             /opt/bin/t2dih.exe /opt/bin/tor3aa 2>/dev/null || true
 
 # ── 9. Environment ───────────────────────────────────────────────────────────
 ENV QUADRO_EXE=${QUADRO_EXE} \
-    QUADRO_ALT=${QUADRO_ALT} \
+    QUADRO_VERSION=${QUADRO_VERSION} \
     QUADRO_HOME=/opt/bin \
     PATH="/opt/bin:/opt/bin/cyana-2.1:/opt/bin/xplor-nih-2.39/bin:${PATH}" \
     CYANA="/opt/bin/cyana-2.1" \
@@ -122,7 +123,7 @@ RUN set -e; \
     for f in tetrad.lib bp.lib other_residues.lib ATOMTYPES.txt ryb.cya sugarbond.cya mp_makeaco.cya tor3aa; do \
         test -f "/opt/bin/$f" || { echo "FATAL: engine data file $f missing"; exit 1; }; \
     done; \
-    echo "quadro image OK: engine=${QUADRO_EXE} alt=${QUADRO_ALT}"
+    echo "quadro image OK: engine=${QUADRO_EXE}"
 
 # ── 11. Runtime ──────────────────────────────────────────────────────────────
 # /work is the mount point for the user's inputs and outputs.

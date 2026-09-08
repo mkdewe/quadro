@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Build the quadro image.
 #
-#   tools/build.sh                          # uses third_party/, tags quadro14l:latest
+#   tools/build.sh                          # uses third_party/, tags quadro14m:latest
 #   tools/build.sh -t myquadro:dev          # custom tag
 #   tools/build.sh --no-cache               # rebuild every layer from scratch
 #
@@ -57,8 +57,7 @@ DOCKER_BUILDKIT=1 docker buildx build \
     "${NO_CACHE[@]}" \
     -f "$REPO/docker/Dockerfile" \
     -t "$TAG" \
-    --build-arg "QUADRO_EXE=quadro${VERSION}.exe" \
-    --build-arg "QUADRO_ALT=alternatywa${VERSION}.exe" \
+    --build-arg "QUADRO_VERSION=$VERSION" \
     --build-context "cyana=$CYANA_DIR" \
     --build-context "xplor=$XPLOR_DIR" \
     "$REPO"

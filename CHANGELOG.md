@@ -1,10 +1,56 @@
 # Changelog
 
 All notable changes to quadro are recorded here. Versions follow the engine's
-own naming (`14L`, …) rather than semantic versioning, because that is what the
-`.inp` files, the published results and the image tags refer to.
+own naming (`14L`, `14M`, …) rather than semantic versioning, because that is
+what the `.inp` files, the published results and the image tags refer to.
 
 Each released version is archived on Zenodo and carries its own DOI.
+
+## [14M]
+
+The engine files are no longer versioned in their names: `engine/quadro.exe`
+is the engine, whichever version `VERSION` says. That removes a class of stale
+reference in scripts and documentation.
+
+### Engine
+
+- **The mirror pass is part of an ordinary run.** Previously a separate wrapper
+  (`alternatywa14L.exe`) invoked behind `--alt`, it now runs automatically as a
+  second pass: every invocation produces `<name>.pdb` and `<name>_alt.pdb`.
+  A topology given by `orient`, `rise`, `twist` and `path` does not fix the
+  handedness of the stack, and the ambiguity is only resolvable by building both
+  and comparing `Etotal`, so it is not something to have to ask for.
+  `--no-mirror` restores the single-pass behaviour.
+- **Unrecognised keywords are rejected (`ERROR 26`)** instead of ignored. This
+  is the fix for a real and hard-to-see failure: `shugar` in place of `sugar`
+  was read as a comment, and the run completed normally having used the default
+  pucker throughout. A result that is wrong in a way nothing reports is worse
+  than one that fails.
+- **A rejected input now exits non-zero.**
+- Sequence alphabet widened: uppercase `T` (ribothymidine) and lowercase `u`
+  (deoxyuridine) are accepted, with matching `RT` and `DU` entries in
+  `other_residues.lib`. 14L rejected both with `ERROR 2`.
+- `sugar` is the keyword. 14L's engine also called it `sugar`; the author's
+  14M line spelled it `shugar`, and that spelling is gone.
+- Engine comments and diagnostics are in English. `ERROR` messages were in
+  Polish through 14L, which `docs/INPUT-FORMAT.md` had to carry a translation
+  table for.
+- The per-run base-pair and helix dump is printed under `test y` rather than
+  unconditionally.
+- `iteration` defaults to 300 rather than 50. The closing CYANA pass is fixed at
+  100 steps; in 14L it ran for `iteration` steps and was preceded by a
+  `read ang` of the accumulated angle file. Reference energies change
+  accordingly — see `examples/reference/PROVENANCE.md`.
+- `cyana2xplor14L.exe` is gone. Its thymine methyl-hydrogen fix is merged into
+  `cyana2xplor.exe`, which is now the only converter.
+
+### Removed
+
+- **`iteration_steps`** was a local patch on 14L and is not part of 14M. Inputs
+  carrying it are now rejected rather than silently ignored. To sample several
+  build-up depths, run once per `iteration` value.
+- The always-2 exit status, and the ~24 lines of commented-out source trailing
+  the AWK program that caused it.
 
 ## [14L] — initial public release
 

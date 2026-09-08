@@ -27,8 +27,8 @@ if((ok2!=0)&&(ok1!=0)&&(ok0!=0)){
                                }
 }
 BEGIN{
-res_xplor["A"]="ADE";res_xplor["C"]="CYT";res_xplor["G"]="GUA";res_xplor["U"]="URI"
-res_xplor["a"]="ADE";res_xplor["c"]="CYT";res_xplor["g"]="GUA";res_xplor["t"]="THY"
+res_xplor["A"]="ADE";res_xplor["C"]="CYT";res_xplor["G"]="GUA";res_xplor["U"]="URI";res_xplor["T"]="THY"
+res_xplor["a"]="ADE";res_xplor["c"]="CYT";res_xplor["g"]="GUA";res_xplor["u"]="URI";res_xplor["t"]="THY"
 atoms["A"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H4\047 | O4\047 | C1\047 | H1\047 | N9  | C4  | N3  | C2  | H2  | N1  | C6  | N6  | H61 | H62 | C5  | N7  | C8  | H8  | C2\047 | H2\047 | O2\047 |HO2\047 | C3\047 | H3\047 | O3\047 "
 count["A"]=split((atoms["A"]),A,"|");for(i=1;i<=count["A"];i++){Ato["A"][i]=A[i]};delete(A)
 atoms["C"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H4\047 | O4\047 | C1\047 | H1\047 | N1  | C6  | H6  | C2  | O2  | N3  | C4  | N4  | H41 | H42 | C5  | H5  | C2\047 | H2\047 | O2\047 |HO2\047 | C3\047 | H3\047 | O3\047 "
@@ -37,12 +37,17 @@ atoms["G"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H
 count["G"]=split((atoms["G"]),A,"|");for(i=1;i<=count["G"];i++){Ato["G"][i]=A[i]};delete(A)
 atoms["U"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H4\047 | O4\047 | C1\047 | H1\047 | N1  | C6  | H6  | C2  | O2  | N3  | H3  | C4  | O4  | C5  | H5  | C2\047 | H2\047 | O2\047 |HO2\047 | C3\047 | H3\047 | O3\047 "
 count["U"]=split((atoms["U"]),A,"|");for(i=1;i<=count["U"];i++){Ato["U"][i]=A[i]};delete(A)
+atoms["T"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H4\047 | O4\047 | C1\047 | H1\047 | N1  | C6  | H6  | C2  | O2  | N3  | H3  | C4  | O4  | C5  | C7  | H71 | H72 | H73 | C2\047 | H2\047 | O2\047 |HO2\047 | C3\047 | H3\047 | O3\047 "
+count["T"]=split((atoms["T"]),A,"|");for(i=1;i<=count["T"];i++){Ato["T"][i]=A[i]};delete(A)
+
 atoms["a"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H4\047 | O4\047 | C1\047 | H1\047 | N9  | C4  | N3  | C2  | H2  | N1  | C6  | N6  | H61 | H62 | C5  | N7  | C8  | H8  | C2\047 | H2\047 |H2\047\047 | C3\047 | H3\047 | O3\047 "
 count["a"]=split((atoms["a"]),A,"|");for(i=1;i<=count["a"];i++){Ato["a"][i]=A[i]};delete(A)
 atoms["c"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H4\047 | O4\047 | C1\047 | H1\047 | N1  | C6  | H6  | C2  | O2  | N3  | C4  | N4  | H41 | H42 | C5  | H5  | C2\047 | H2\047 |H2\047\047 | C3\047 | H3\047 | O3\047 "
 count["c"]=split((atoms["c"]),A,"|");for(i=1;i<=count["c"];i++){Ato["c"][i]=A[i]};delete(A)
 atoms["g"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H4\047 | O4\047 | C1\047 | H1\047 | N9  | C4  | N3  | C2  | N2  | H21 | H22 | N1  | H1  | C6  | O6  | C5  | N7  | C8  | H8  | C2\047 | H2\047 |H2\047\047 | C3\047 | H3\047 | O3\047 "
 count["g"]=split((atoms["g"]),A,"|");for(i=1;i<=count["g"];i++){Ato["g"][i]=A[i]};delete(A)
+atoms["u"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H4\047 | O4\047 | C1\047 | H1\047 | N1  | C6  | H6  | C2  | O2  | N3  | H3  | C4  | O4  | C5  | H5  | C2\047 | H2\047 |H2\047\047 | C3\047 | H3\047 | O3\047 "
+count["u"]=split((atoms["u"]),A,"|");for(i=1;i<=count["u"];i++){Ato["u"][i]=A[i]};delete(A)
 atoms["t"]=" P   | O1P | O2P | O5\047 | C5\047 | H5\047 |H5\047\047 | C4\047 | H4\047 | O4\047 | C1\047 | H1\047 | N1  | C6  | H6  | C2  | O2  | N3  | H3  | C4  | O4  | C5  | C7  | H71 | H72 | H73 | C2\047 | H2\047 |H2\047\047 | C3\047 | H3\047 | O3\047 "
 count["t"]=split((atoms["t"]),A,"|");for(i=1;i<=count["t"];i++){Ato["t"][i]=A[i]};delete(A)
 #printf "A %s\n",count["A"]
@@ -72,10 +77,10 @@ if($1=="ATOM"){liat=liat+1;s=substr($0,22,5)
   if(name_at[liat]==" H5\042 "){name_at[liat]="H5\047\047 "}else{
   if(name_at[liat]==" OP1 "){name_at[liat]=" O1P "}else{
   if(name_at[liat]==" OP2 "){name_at[liat]=" O2P "}else{
-  if((name_res[lires]=="THY")||(name_res[lires]=="t  ")){
-    if(name_at[liat]=="1H7  "){name_at[liat]=" H71 "}
-    if(name_at[liat]=="2H7  "){name_at[liat]=" H72 "}
-    if(name_at[liat]=="3H7  "){name_at[liat]=" H73 "}
+  if((name_res[lires]=="THY")||(name_res[lires]=="t  ")||(name_res[lires]=="T  ")){
+    if((name_at[liat]==" H0  ")||(name_at[liat]=="1H7  ")){name_at[liat]=" H71 "}
+    if((name_at[liat]==" H7  ")||(name_at[liat]=="2H7  ")){name_at[liat]=" H72 "}
+    if((name_at[liat]==" H9  ")||(name_at[liat]=="3H7  ")){name_at[liat]=" H73 "}
 #   if(name_at[liat]==" C7  "){name_at[liat]=" C7  "}
                             }
   if((name_res[lires]=="ADE")||(name_res[lires]=="a  ")||(name_res[lires]=="A  ")){

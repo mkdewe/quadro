@@ -7,7 +7,7 @@ which residues form which tetrad, in which glycosidic orientation, stacked with
 what rise and twist. It assembles the molecule residue by residue in torsion
 space with CYANA, then refines it in Cartesian space with Xplor-NIH.
 
-Engine version in this repository: **14L** (see `VERSION`).
+Engine version in this repository: **14M** (see `VERSION`).
 
 > ### ⚠ Two dependencies are not included and cannot be
 >
@@ -39,44 +39,44 @@ tools/build.sh
 tools/run.sh --outdir out examples/6a-1hap_js12B.inp
 ```
 
-You get `out/1hap_js12B_100.pdb`, `out/1hap_js12B_100_energy.txt` and a
-`.runlog`. `Etotal` in the energy file is the figure to compare when ranking
-several models of the same sequence — lower is better.
+`Etotal` in the energy file is the figure to compare when ranking several models
+of the same sequence — lower is better.
 
-Reference results for both examples, and the environment that produced them,
-are in [`examples/reference/`](examples/reference/) — compare against those to
-check a fresh installation.
+Reference results for all three examples, and the environment that produced
+them, are in [`examples/reference/`](examples/reference/) — compare against
+those to check a fresh installation.
 
-### Stack handedness (`--alt`)
+### Every run builds both handednesses
 
 A topology specified through `orient`, `rise`, `twist` and `path` does not
 determine the handedness of the stack. The opposite reading produces a
 sterically plausible structure that differs only in energy, so the ambiguity
-cannot be resolved by inspection of the model.
+cannot be resolved by inspection of the model — only by building both and
+comparing.
 
-The `--alt` option builds both readings in one invocation: the input as written,
-and its mirror image, obtained by inverting the stacking direction, the twist
-and the hydrogen-bond directionality together.
-
-```bash
-tools/run.sh --alt --outdir out examples/6a-1hap_js12B.inp
-```
+quadro therefore does exactly that, on every run. The command above writes:
 
 ```
-out/1hap_js12B_100.pdb        Etotal = -624.033   input as written
-out/1hap_js12B_100_alt.pdb    Etotal = -623.782   mirror image
+out/1hap_js12B_100.pdb        Etotal = -620.281   input as written
+out/1hap_js12B_100_alt.pdb    Etotal = -629.866   mirror image
+out/1hap_js12B_100_energy.txt
+out/1hap_js12B_100_alt_energy.txt
 ```
 
-The lower `Etotal` identifies the favoured handedness; a small difference, as
-above, indicates that the energy function does not discriminate strongly for
-that sequence. The transformation is specified in
-[docs/ALGORITHM.md](docs/ALGORITHM.md#the-alternative-engine).
+The lower `Etotal` identifies the favoured handedness. How large a margin means
+anything depends on the structure: 9.6 here, 1.8 for `examples/6pnk.inp` — which
+settles nothing — and 38 for `examples/pz74.inp`, which settles it. The
+transformation is specified in
+[docs/ALGORITHM.md](docs/ALGORITHM.md#the-mirror-pass).
+
+Pass `--no-mirror` to build only the input as written. It halves the run time
+and gives up the comparison.
 
 Without the wrappers:
 
 ```bash
-docker run --rm -v "$PWD:/work" quadro14l:latest examples/pz74.inp
-docker run --rm -v "$PWD:/work" quadro14l:latest --help
+docker run --rm -v "$PWD:/work" quadro14m:latest examples/pz74.inp
+docker run --rm -v "$PWD:/work" quadro14m:latest --help
 ```
 
 ---
@@ -107,10 +107,11 @@ Field by field:
 **`name`** — base name for the output. This run writes `6pnk.pdb` and
 `6pnk_energy.txt`.
 
-**`sequence`** — the nucleotides. **Case selects the sugar, not the base:**
-uppercase `ACGU` is RNA (ribose), lowercase `acgt` is DNA (deoxyribose). Mixing
-them gives a chimeric molecule. Note the asymmetry — thymine is always lowercase
-`t`, uracil always uppercase `U`; uppercase `T` and lowercase `u` are rejected.
+**`sequence`** — the nucleotides. **Case selects the sugar, the letter selects
+the base:** uppercase `ACGTU` is RNA (ribose), lowercase `acgtu` is DNA
+(deoxyribose). All ten combinations are meaningful — uppercase `T` is
+ribothymidine, lowercase `u` deoxyuridine — and mixing cases gives a chimeric
+molecule.
 
 **`structure`** — which residues form tetrads. Same length as `sequence`. Two
 notations exist, and the presence of a `^` anywhere selects between them. Here
@@ -151,16 +152,20 @@ for production runs.
 everything, `0` keeps it all — set `0` when a run fails and you need to see why.
 It has **no effect on the resulting geometry or energy**.
 
-**`iteration`** — CYANA minimisation steps at each build-up stage; minimum 10.
-**It sets the starting point, not the answer:** it decides how well-relaxed a
-structure the Cartesian refinement receives, and 2000 Xplor-NIH steps follow
-regardless. More is therefore not monotonically better: a deeper build-up fixes
-some structures and breaks others. The useful move is to run several depths and
-keep the lowest `Etotal`.
+**`iteration`** — CYANA minimisation steps at each build-up stage; minimum 10,
+default 300. **It sets the starting point, not the answer:** it decides how
+well-relaxed a structure the Cartesian refinement receives, and 2000 Xplor-NIH
+steps follow regardless. More is therefore not monotonically better: a deeper
+build-up fixes some structures and breaks others. The useful move is to run
+several depths and keep the lowest `Etotal`.
+
+A line that is neither a keyword, a comment nor blank is rejected outright
+(`ERROR 26`) rather than ignored — a misspelt field used to pass silently and
+leave the run using the default.
 
 Full reference, including the labelled `structure` notation, the optional
-`my_angles` and `iteration_steps` fields and a translated error table (engine
-messages are in Polish): **[docs/INPUT-FORMAT.md](docs/INPUT-FORMAT.md)**.
+`my_angles` field and the error table:
+**[docs/INPUT-FORMAT.md](docs/INPUT-FORMAT.md)**.
 
 ---
 
@@ -176,9 +181,12 @@ messages are in Polish): **[docs/INPUT-FORMAT.md](docs/INPUT-FORMAT.md)**.
 | Stage | Program | Space | Steps |
 |---|---|---|---|
 | Build-up, once per residue in `path` order | CYANA | torsion angles | `iteration` each |
-| Final pass | CYANA | torsion angles | `iteration` |
+| Closing pass | CYANA | torsion angles | 100 |
 | Refinement 1 — tetrad core frozen | Xplor-NIH | Cartesian | 1000 |
 | Refinement 2 — all released, planar + dihedral + NOE restraints | Xplor-NIH | Cartesian | 1000 |
+
+The whole sequence runs twice per invocation — once on the input as written and
+once on its mirror image. See [the mirror pass](docs/ALGORITHM.md#the-mirror-pass).
 
 **[docs/ALGORITHM.md](docs/ALGORITHM.md)** describes each stage, with the
 relevant lines of the engine quoted.

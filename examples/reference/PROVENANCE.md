@@ -22,24 +22,44 @@ tools/run.sh --outdir examples/reference \
 
 | Component | Version / build |
 |---|---|
-| quadro engine | 14L |
+| quadro engine | 14M |
 | CYANA | 2.1 |
 | Xplor-NIH | 2.39, Linux x86-64 |
 | Base image | `ubuntu:22.04@sha256:2edbbc5dc405e9612ba3584ce95480277e3eb374407b5505fe26f17df77c7dbc` |
 | CPU | Intel Core i7-12700K (x86-64) |
-| Date | 2026-08-27 |
+| Date | 2026-09-08 |
 
 ## Results
 
+Each input yields two structures, because the mirror pass is part of an ordinary
+run: the topology as written, and the same residues in the opposite-handed
+stack.
+
 | Input | Output | Atoms | Residues | `Etotal` |
 |---|---|---|---|---|
-| `6a-1hap_js12B.inp` | `1hap_js12B_100.pdb` | 488 | 15 | −624.033 |
-| `pz74.inp` | `pz74_mp_G14L_70.pdb` | 1313 | 41 | −901.663 |
-| `6pnk.inp` | `6pnk.pdb` | 555 | 17 | −676.819 |
+| `6a-1hap_js12B.inp` | `1hap_js12B_100.pdb` | 488 | 15 | −620.281 |
+| | `1hap_js12B_100_alt.pdb` | 488 | 15 | **−629.866** |
+| `pz74.inp` | `pz74_mp_70.pdb` | 1313 | 41 | −906.937 |
+| | `pz74_mp_70_alt.pdb` | 1313 | 41 | **−945.249** |
+| `6pnk.inp` | `6pnk.pdb` | 555 | 17 | −665.030 |
+| | `6pnk_alt.pdb` | 555 | 17 | **−666.835** |
 
-All runs completed with no `ERROR` lines in the engine output. Repeated runs on
-this machine reproduced the first two energies exactly.
+All six runs completed with no `ERROR` lines in the engine output. The lower
+`Etotal` of each pair is shown in bold; it is the mirrored reading in all three
+cases, which is a property of these particular inputs and not a general result.
 
-`6pnk.inp` was added later than the other two and its reference was produced on
-2026-08-31, on the same machine and from the same Dockerfile, but in a
-separately built image.
+The margins are worth reading carefully. For `6pnk` the two readings are
+1.8 apart on a total near 666, which does not discriminate between them. For
+`pz74` the separation is 38, which does.
+
+## Comparison with 14L
+
+The same three inputs under 14L gave −624.033, −901.663 and −676.819. Atom and
+residue counts are identical, so the two engines build the same molecules; the
+energies are not, and were not expected to be.
+
+Two changes in the CYANA stage account for it. 14L re-read the accumulated angle
+file (`read ang Q<n>`) immediately before the closing minimisation and 14M does
+not, and 14L ran that closing minimisation for `iteration` steps where 14M fixes
+it at 100. Neither engine is a recomputation of the other: they hand Xplor-NIH
+different starting structures.

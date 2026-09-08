@@ -9,24 +9,27 @@
 set -uo pipefail
 
 QUADRO_HOME="${QUADRO_HOME:-/opt/bin}"
-ENGINE="${QUADRO_EXE:-quadro14L.exe}"
-ALT="${QUADRO_ALT:-alternatywa14L.exe}"
+ENGINE="${QUADRO_EXE:-quadro.exe}"
 WORK="/work"
 OUTDIR="$WORK"
+ENGINE_OPTS=()
 
 usage() {
     cat <<EOF
 quadro — G-quadruplex 3D structure generator
 
 USAGE
-    docker run --rm -v "\$PWD:/work" quadro14l:latest [OPTIONS] INPUT.inp [INPUT2.inp ...]
+    docker run --rm -v "\$PWD:/work" quadro14m:latest [OPTIONS] INPUT.inp [INPUT2.inp ...]
 
     Paths are relative to /work, i.e. to the directory you mounted.
 
+    Each input is built twice by default: as written, and mirrored — the same
+    residues in the opposite-handed stack. That yields NAME.pdb and NAME_alt.pdb;
+    keep whichever has the lower Etotal.
+
 OPTIONS
-    --alt               Run the alternative engine ($ALT) instead of $ENGINE.
-                        It emits two structures per input: NAME.pdb and
-                        NAME_alt.pdb. Keep whichever has the lower Etotal.
+    --no-mirror         Build only the input as written, skipping the mirror
+                        pass. Halves the run time and gives up the comparison.
     --outdir DIR        Write results to DIR (relative to /work). Default: /work.
     --shell             Drop into an interactive shell inside the container.
     --version           Print the engine version and exit.
@@ -34,12 +37,12 @@ OPTIONS
 
 OUTPUT
     For an input whose 'name' field is FOO, the engine writes FOO.pdb and
-    FOO_energy.txt (one pair per iteration checkpoint). Both are copied to the
-    output directory. A .runlog with the full engine output is written next to
-    them.
+    FOO_energy.txt, plus FOO_alt.pdb and FOO_alt_energy.txt from the mirror
+    pass. All are copied to the output directory, together with a .runlog
+    holding the full engine output.
 
 EXAMPLE
-    docker run --rm -v "\$PWD:/work" quadro14l:latest examples/pz74.inp
+    docker run --rm -v "\$PWD:/work" quadro14m:latest examples/pz74.inp
 
 SEE ALSO
     docs/INPUT-FORMAT.md for the .inp file format.
@@ -50,10 +53,10 @@ EOF
 inputs=()
 while [ $# -gt 0 ]; do
     case "$1" in
-        --alt)      ENGINE="$ALT"; shift ;;
+        --no-mirror) ENGINE_OPTS=(--no-mirror); shift ;;
         --outdir)   OUTDIR="$WORK/$2"; shift 2 ;;
         --shell)    exec /bin/bash ;;
-        --version)  echo "quadro engine: $ENGINE"; exit 0 ;;
+        --version)  echo "quadro ${QUADRO_VERSION:-unknown} ($ENGINE)"; exit 0 ;;
         -h|--help)  usage; exit 0 ;;
         -*)         echo "quadro: unknown option '$1'" >&2; usage >&2; exit 64 ;;
         *)          inputs+=("$1"); shift ;;
@@ -112,22 +115,20 @@ for input in "${inputs[@]}"; do
     # a position that does not exist and a character that prints as nothing.
     tr -d '\r' < "$src" > "$run_dir/$base"
 
-    # The exit status is deliberately ignored. quadro14L closes its awk program
-    # early and leaves ~24 lines of commented-out source behind, which the shell
-    # then parses as shell code and rejects — so 14L exits 2 on every run,
-    # successful or not. Whether the run worked is decided by whether it
-    # produced a PDB.
-    ( cd "$run_dir" && "./$ENGINE" "$base" ) > "$log" 2>&1
+    # The exit status is not the success criterion. The engine's own status is
+    # whatever its last system() call returned, which says nothing about whether
+    # a structure was built. Judge the run by whether it produced a PDB.
+    ( cd "$run_dir" && "./$ENGINE" "${ENGINE_OPTS[@]}" "$base" ) > "$log" 2>&1
     engine_status=$?
 
     # Collect by the input's `name` field, not by extension. The working
-    # directory also holds build-up snapshots (temperary*.pdb, ~15 of them),
-    # CYANA-space checkpoints (checkpoint_<K>.pdb) and the raw Xplor output
-    # (<name>_xplor.pdb) that xplor2pdb2.exe renumbers into the real result.
-    # Copying every *.pdb reported a single run as 16 structures.
+    # directory also holds build-up snapshots (temperary*.pdb, ~15 of them under
+    # `test y`) and the raw Xplor output (<name>_xplor.pdb) that xplor2pdb2.exe
+    # renumbers into the real result. Copying every *.pdb reported a single run
+    # as 16 structures.
     #
-    # A plain `iteration` writes <name>.pdb; an `iteration_steps` ladder writes
-    # one <name>_<K>.pdb per checkpoint. Both are results; everything else is not.
+    # The run writes <name>.pdb, and <name>_alt.pdb for the mirror pass. Those
+    # are the results; everything else in the directory is not.
     name="$(awk '$1 == "name" { n = $2 } END { print (n == "" ? "quadro7_test" : n) }' "$run_dir/$base")"
 
     produced=0

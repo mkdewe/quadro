@@ -5,12 +5,17 @@
 | `6a-1hap_js12B.inp` | Unimolecular antiparallel DNA G-quadruplex, two tetrads, labelled `structure` notation, `chi` fixing *syn* residues. |
 | `pz74.inp` | Caret `^` notation combined with a dot-bracket duplex — a G-quadruplex embedded in a longer paired construct. |
 | `pz74-rm0.inp` | Same as `pz74.inp` with `rm_level 0`, so all CYANA/Xplor intermediates are kept. Use this one when diagnosing a failure. |
+| `6pnk.inp` | Three-tetrad parallel DNA G-quadruplex with per-step `rise` and `twist` and an explicit `sugar` line. This is the input shown in the animations in [`../docs/media/`](../docs/media/). |
 
 Run one:
 
 ```bash
 tools/run.sh --outdir out examples/6a-1hap_js12B.inp
 ```
+
+Each of these writes two structures, `<name>.pdb` and `<name>_alt.pdb` — the
+topology as written and its mirror image. The mirror pass is part of an ordinary
+run; `--no-mirror` skips it.
 
 The `.inp` format is documented in [`../docs/INPUT-FORMAT.md`](../docs/INPUT-FORMAT.md).
 

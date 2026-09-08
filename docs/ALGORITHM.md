@@ -6,7 +6,7 @@ of a G-quadruplex — which residues form which tetrad, in which orientation,
 stacked with what rise and twist — into input decks for two established
 structure-calculation programs, and run them in the right order.
 
-The engine is a single AWK program (`engine/quadro14L.exe`, ~880 lines). The
+The engine is a single AWK program (`engine/quadro.exe`, ~950 lines). The
 `.exe` extension is the author's convention; it is a text script, and you can
 read it.
 
@@ -51,8 +51,8 @@ as its residue is added.
 
 Working in torsion space rather than Cartesian space is what makes this
 tractable: bond lengths and angles stay at ideal values by construction, so only
-the rotatable degrees of freedom are searched. A final CYANA pass closes the
-stage.
+the rotatable degrees of freedom are searched. A closing CYANA pass of 100 steps
+ends the stage; that figure is fixed and is not what `iteration` controls.
 
 Two consequences worth stating plainly, because they drive how the tool should
 be used:
@@ -104,11 +104,17 @@ the same sequence.
 
 ---
 
-## The alternative engine
+## The mirror pass
 
-`alternatywa<version>.exe` is not a second engine but a wrapper. It derives a
-mirrored copy of the input and invokes the ordinary engine twice: once on the
-original, once on the mirrored copy. Four fields are inverted:
+A topology specified through `orient`, `rise`, `twist` and `path` does not
+determine the handedness the molecule adopts. The opposite reading gives a
+sterically plausible structure differing only in energy, so the ambiguity is not
+resolvable by inspection of the model. Constructing both and comparing `Etotal`
+resolves it by calculation — which is why quadro does it on every run rather
+than on request.
+
+Stages 1–4 above therefore run twice. The second time they run on a derived
+input in which four fields are inverted together:
 
 | Field | Transformation | Example |
 |---|---|---|
@@ -120,33 +126,38 @@ original, once on the mirrored copy. Four fields are inverted:
 
 Inverting the stacking direction, the twist and the hydrogen-bond directionality
 together, and reordering the residues within each tetrad accordingly, yields the
-opposite-handed arrangement of the same residues.
+opposite-handed arrangement of the same residues. Inverting any one of them
+alone would describe a molecule that cannot be built.
 
-The rationale is that a topology specified through `orient`, `rise`, `twist` and
-`path` does not determine the handedness the molecule adopts. The opposite
-reading gives a sterically plausible structure differing only in energy, so the
-ambiguity is not resolvable by inspection of the model. Constructing both and
-comparing `Etotal` resolves it by calculation.
+Mechanically, the engine writes the derived `.inp` next to the original and
+re-invokes itself on it with `--no-mirror`, which is what stops the recursion.
+The derived file is left in the working directory, so the second calculation is
+reproducible on its own. In 14L this lived in a separate wrapper script,
+`alternatywa14L.exe`; it is part of the engine now.
 
 One invocation therefore yields two structures with identical atom counts and
 different coordinates:
 
 ```bash
-tools/run.sh --alt --outdir out examples/6a-1hap_js12B.inp
+tools/run.sh --outdir out examples/6a-1hap_js12B.inp
 ```
 
 ```
-out/1hap_js12B_100.pdb            Etotal = -624.033   input as written
-out/1hap_js12B_100_alt.pdb        Etotal = -623.782   mirror image
+out/1hap_js12B_100.pdb            Etotal = -620.281   input as written
+out/1hap_js12B_100_alt.pdb        Etotal = -629.866   mirror image
 out/1hap_js12B_100_energy.txt
 out/1hap_js12B_100_alt_energy.txt
 ```
 
-The margin here is 0.25, which does not discriminate between the two
-arrangements for this sequence. A large separation, by contrast, rules out the
-opposite reading of the topology. (Xplor-NIH does not label the units in
-`<name>_energy.txt`; treat `Etotal` as a relative figure for ranking models of
-the same sequence, not as an absolute quantity.)
+Here the mirror is favoured by 9.6. How large a margin is meaningful depends on
+the structure: for `examples/6pnk.inp` the two readings sit 1.8 apart and do not
+discriminate, while for `examples/pz74.inp` they sit 38 apart and do.
+(Xplor-NIH does not label the units in `<name>_energy.txt`; treat `Etotal` as a
+relative figure for ranking models of the same sequence, not as an absolute
+quantity.)
+
+`--no-mirror` skips the second pass. It halves the run time and gives up the
+comparison, which is worth doing only when the handedness is already settled.
 
 ---
 
@@ -155,7 +166,8 @@ the same sequence, not as an absolute quantity.)
 A typical 15–25 nt structure takes on the order of a minute per pass on one
 core, dominated by CYANA's build-up: cost grows with the number of build-up
 stages (≈ the length of `path`) multiplied by `iteration`. The two Xplor passes
-are a fixed cost that does not depend on any `.inp` setting.
+are a fixed cost that does not depend on any `.inp` setting. The mirror pass
+doubles all of it.
 
 Nothing in the pipeline is parallelised internally. Throughput comes from
 running independent inputs concurrently in separate containers.

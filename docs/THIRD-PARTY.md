@@ -117,7 +117,7 @@ will not find them otherwise.
 ### 4. Prepare the engine directory
 
 The engine resolves its data files **relative to the current directory**
-(`DIR="./"` near the top of `engine/quadro14L.exe`). So it must be run from a
+(`DIR="./"` near the top of `engine/quadro.exe`). So it must be run from a
 directory containing all of `engine/`, and the files must have Unix line endings:
 
 ```bash
@@ -131,7 +131,7 @@ If your copy of the engine carries an absolute `DIR="..."` path instead, point
 it at the working directory once:
 
 ```bash
-sed -i 's|^DIR="/.*"$|DIR="./"|' quadro14L.exe
+sed -i 's|^DIR="/.*"$|DIR="./"|' quadro.exe
 ```
 
 ### 5. Run
@@ -140,11 +140,13 @@ Copy your `.inp` into that directory and run the engine from there:
 
 ```bash
 cp /path/to/my.inp .
-./quadro14L.exe my.inp
+./quadro.exe my.inp
 ls *.pdb *_energy.txt
 ```
 
-Ignore the exit status — quadro14L exits 2 on every run, successful or not,
-because the shell parses the commented-out source trailing its AWK program.
-Judge success by whether a `.pdb` appeared. Loader errors mentioning 32-bit
-libraries mean step 1 was incomplete.
+That builds two structures — the input as written and its mirror image. Add
+`--no-mirror` before the file name to build only the first.
+
+The engine exits non-zero when it rejects an input, but its status is otherwise
+whatever its last `system()` call returned, so judge a run by whether a `.pdb`
+appeared. Loader errors mentioning 32-bit libraries mean step 1 was incomplete.

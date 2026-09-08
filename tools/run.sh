@@ -2,7 +2,7 @@
 # Convenience wrapper around `docker run` for the quadro image.
 #
 #   tools/run.sh examples/pz74.inp
-#   tools/run.sh --alt --outdir out examples/pz74.inp
+#   tools/run.sh --no-mirror --outdir out examples/pz74.inp
 #
 # Paths are given relative to the repository root, which is mounted at /work.
 # Everything after the options is passed straight through to the container

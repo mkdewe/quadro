@@ -2,7 +2,13 @@
 
 One plain-text file describes one G-quadruplex to build. Each line is
 `keyword value` — whitespace-separated, one keyword per line, order irrelevant.
-Unknown lines are ignored, so `#`-prefixed comments are safe in practice.
+Blank lines and `#`-prefixed comments are allowed; **anything else that is not a
+keyword is rejected with `ERROR 26`.**
+
+That strictness is deliberate. Earlier versions ignored unrecognised lines, so a
+misspelt field — `shugar` for `sugar` — was read as a comment and the run
+proceeded silently with the default. The result looked entirely valid while
+being a different calculation from the one that was asked for.
 
 The value **must not contain spaces**: the parser reads `$2`, so `path A1; B1`
 silently loses everything after the first space. Use `A1;B1`.
@@ -37,15 +43,16 @@ Defaults to `quadro7_test` if omitted. Keep it filesystem-safe.
 
 | Characters | Meaning |
 |---|---|
-| `A C G U` (uppercase) | ribonucleotides — RNA |
-| `a c g t` (lowercase) | deoxyribonucleotides — DNA |
+| `A C G T U` (uppercase) | ribonucleotides — RNA |
+| `a c g t u` (lowercase) | deoxyribonucleotides — DNA |
+
+Case selects the sugar and the letter selects the base, independently, so all
+ten combinations are meaningful: uppercase `T` is ribothymidine and lowercase
+`u` is deoxyuridine. Both were rejected by 14L and were added in 14M together
+with the `RT` and `DU` entries in `other_residues.lib`.
 
 Mixed case is allowed and gives a chimeric RNA/DNA molecule; the engine reports
 the RNA fraction. Anything else is rejected with `ERROR 2`.
-
-> Note the asymmetry, which is a common source of confusion: **uppercase `T` and
-> lowercase `u` are not valid.** Uracil is always uppercase `U`, thymine always
-> lowercase `t`.
 
 ### `structure` — which residues form tetrads *(required)*
 Same length as `sequence`, or `ERROR 4`. Two notations are accepted, chosen
@@ -134,27 +141,20 @@ One value, or one per tetrad-to-tetrad step, semicolon-separated:
 Same multi-step syntax as `rise`: `twist 19;29`. Typical values are ≈30° for
 parallel and ≈15–20° for antiparallel stacks.
 
-### `iteration` — CYANA minimisation depth *(optional, default 50)*
+### `iteration` — CYANA minimisation depth *(optional, default 300)*
 Number of CYANA minimisation steps run **at every build-up stage**. Must be
-≥ 10 (`ERROR 25`).
+≥ 10 (`ERROR 25`). The closing CYANA pass is fixed at 100 steps and is not
+affected by it.
 
 More is not monotonically better. `iteration` decides how good a starting
 structure the Cartesian refinement receives, not how good the final answer is —
 2000 hard-wired Xplor-NIH steps follow regardless. See [ALGORITHM.md](ALGORITHM.md).
 
-### `iteration_steps` — checkpoint ladder *(optional)*
-Comma-separated list, e.g. `iteration_steps 30,50,70,100`. Each value ≥ 10
-(`ERROR 25`). Produces one refined structure per checkpoint from a **single**
-run.
-
-> Note the shared build-up: all checkpoints in one `iteration_steps` run come
-> from the same build-up phase and differ only in the length of the final
-> minimisation tail, so they explore less than their number suggests. To vary
-> the build-up itself, run the engine repeatedly with different `iteration`
-> values instead.
-
-`iteration` and `iteration_steps` both set the same internal ladder; whichever
-line comes last in the file wins.
+> `iteration_steps`, which produced several checkpoints from one build-up, was a
+> local patch on 14L and is **not** part of 14M. An input still carrying it is
+> now rejected with `ERROR 26` rather than silently ignored. To sample several
+> depths, run the engine once per `iteration` value and keep the lowest
+> `Etotal`.
 
 ### `my_angles` — extra torsion-angle restraints *(optional)*
 Path to a CYANA angle-restraint file. The name **must** end in `.cya`
@@ -184,13 +184,12 @@ For a run with `name FOO`:
 | `FOO_energy.txt` | final Xplor-NIH energy terms, including `Etotal` |
 | `FOO.runlog` | full engine output (written by the container entrypoint) |
 
-With `iteration_steps`, one `<name>_<K>.pdb` / `<name>_<K>_energy.txt` pair is
-written per checkpoint `K`.
-
-With the alternative engine (`--alt`) you get **two** pairs: `FOO.pdb` for the
-input as written, and `FOO_alt.pdb` for the mirrored arrangement — the same
-residues stacked with the opposite handedness. Keep whichever has the lower
-`Etotal`; see [ALGORITHM.md](ALGORITHM.md#the-alternative-engine).
+Every run produces **two** pairs, because the mirror pass is part of an ordinary
+run: `FOO.pdb` for the input as written, and `FOO_alt.pdb` for the mirrored
+arrangement — the same residues stacked with the opposite handedness. Keep
+whichever has the lower `Etotal`; see
+[ALGORITHM.md](ALGORITHM.md#the-mirror-pass). `--no-mirror` builds only the
+first.
 
 `Etotal` is the figure to compare when ranking several models of the same
 sequence — lower is better.
@@ -199,8 +198,8 @@ sequence — lower is better.
 
 ## Error codes
 
-All engine diagnostics are printed as `ERROR <n> : <message>`. **The messages
-are in Polish**; the table below is the translation.
+All engine diagnostics are printed as `ERROR <n> : <message>` on standard
+output, and a rejected input exits non-zero.
 
 | Code | Meaning |
 |---|---|
@@ -218,14 +217,13 @@ are in Polish**; the table below is the translation.
 | 18 | invalid character in `chi` (allowed: `.AaSs`) |
 | 19 | `sugar` length ≠ `sequence` length |
 | 20 | invalid character in `sugar` (allowed: `.NnSs`) |
-| 25 | `iteration` / `iteration_steps` value below 10 |
+| 25 | `iteration` value below 10 |
+| 26 | unrecognised keyword — see the note at the top of this page |
 | 102 | `sequence` failed the residue-count cross-check |
 | 104 | tetrad-residue count is not a multiple of 4, or bad `structure` character |
 | 105 | `structure` and `path` disagree |
 | 106 | unbalanced or invalid base pair in `structure` |
 
-A non-zero **process** exit status is *not* an error indicator in 14L: the AWK
-program is closed at line 859 of `engine/quadro14L.exe` and the trailing 24
-lines of commented-out source are parsed by the shell instead, so the engine
-exits 2 on every run, successful or not. Judge success by whether a `.pdb` was
-produced.
+The container entrypoint judges a run by whether it produced a `.pdb`, not by
+the exit status, because the engine's status is otherwise whatever its last
+`system()` call returned.
