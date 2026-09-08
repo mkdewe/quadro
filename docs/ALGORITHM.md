@@ -23,9 +23,29 @@ read it.
 
 `tetrad.lib`, `bp.lib` and `other_residues.lib` hold idealised coordinates and
 torsion angles for G-tetrads, canonical base pairs and individual residues.
-From `orient`, `rise` and `twist` the engine places each tetrad in space by
-rotation and translation, producing a target geometry: a stack of tetrads with
-the requested handedness and spacing.
+From `orient` (polarity), `rise` and `twist` the engine places each tetrad in
+space by rotation and translation, producing a target geometry: a stack of
+tetrads with the requested handedness and spacing.
+
+`orient` picks the tetrad library entry — one of a `…P` / `…M` pair per residue
+type, the two hydrogen-bond directionalities — while `rise` and `twist` place
+it. **The first tetrad defines the frame and is never moved:** it sits at
+*z* = 0, unrotated, and every later tetrad is placed at the running sum of the
+steps before it.
+
+```awk
+rise_sum[1]  = 0;  twist_sum[1]  = 0
+rise_sum[i]  = rise_sum[i-1]  + RISE[i-1]
+twist_sum[i] = twist_sum[i-1] + TWIST[i-1]
+```
+
+That is why both fields are signed, and why negative values are ordinary rather
+than a mistake: each value says where the next tetrad goes *relative to the
+first*, not how far apart two neighbours are. A stack may grow in either
+direction along *z* and may reverse partway — `examples/7ys7.inp` uses
+`rise -3.8;6.7`. It is also why negating every step of both fields is the
+geometric half of the [mirror pass](#the-mirror-pass): it reflects the whole
+stack through the plane of the first tetrad.
 
 Loops and any dot-bracket duplex regions in `structure` are not placed here —
 they are grown in stage 2.

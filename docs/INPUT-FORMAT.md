@@ -107,12 +107,18 @@ this sequence, running a CYANA minimisation after each one. A different `path`
 over the same topology is a different calculation with a different result. See
 [ALGORITHM.md](ALGORITHM.md).
 
-### `orient` — glycosidic orientation per tetrad *(required)*
+### `orient` (polarity) — hydrogen-bond directionality per tetrad *(required)*
 Semicolon-separated, **one entry per tetrad**, in tetrad order (`ERROR 11`).
 Each entry is a column letter followed by `+` or `-`:
 
 - `+` → Watson–Crick/Hoogsteen (`WH`) hydrogen-bond directionality
 - `-` → Hoogsteen/Watson–Crick (`HW`)
+
+This is the field the G4Composer interface, and the animations in
+[`media/`](media/), call **polarity**; `G4plus` and `G4minus` there are `+` and
+`-` here. It selects which of the two `…P` / `…M` tetrad library entries is used
+for that tetrad, so it fixes the direction the four Hoogsteen bonds run around
+the tetrad — clockwise or anticlockwise seen from the same side.
 
 The letter must match the tetrad's ordinal position (`A` for the first, `B` for
 the second, …) or you get `ERROR 12`; the sign must be `+` or `-` (`ERROR 13`).
@@ -145,12 +151,41 @@ Same length as `sequence` (`ERROR 19`). One character per residue, from `.NnSs`
 Omit the line entirely to accept the defaults.
 
 ### `rise` — helical rise, Å *(optional, default 3.4)*
-One value, or one per tetrad-to-tetrad step, semicolon-separated:
-`rise 3.4;3.3` for a three-tetrad stack.
+One value, or one per tetrad-to-tetrad step, semicolon-separated. A stack of
+*n* tetrads has *n − 1* steps, so `rise 3.4;3.3` describes three tetrads: 3.4 Å
+from A to B, then 3.3 Å from B to C. Give fewer values than there are steps and
+the remaining steps repeat the **first** value.
+
+**The sign is meaningful, and both signs are normal.** The first tetrad is the
+frame of reference: the engine places it at *z* = 0 and positions every later
+tetrad at the running sum of the steps before it —
+
+```awk
+rise_sum[1] = 0
+rise_sum[i] = rise_sum[i-1] + RISE[i-1]      # then: z = z + rise_sum[i]
+```
+
+— so a value is a displacement **from the first tetrad, along the stack axis**,
+not an unsigned distance between neighbours. Positive moves the next tetrad one
+way along *z*, negative the other. A stack can therefore legitimately grow
+downwards from its first tetrad, and one with mixed signs folds back on itself:
+`examples/7ys7.inp` uses `rise -3.8;6.7`, putting tetrad B 3.8 Å *below* A and
+tetrad C 2.9 Å above it.
+
+Flipping the sign of every step reflects the stack through the plane of the
+first tetrad, which is half of what the [mirror pass](ALGORITHM.md#the-mirror-pass)
+does.
 
 ### `twist` — helical twist, degrees *(optional, default 29)*
-Same multi-step syntax as `rise`: `twist 19;29`. Typical values are ≈30° for
-parallel and ≈15–20° for antiparallel stacks.
+Same multi-step syntax, same accumulation, same reason for the sign: the first
+tetrad is unrotated and each later one is turned about *z* by the running sum of
+the preceding steps. Positive and negative are opposite senses of rotation, so
+`twist -24.8;54.3` turns tetrad B one way and then takes C well past A in the
+other.
+
+Typical magnitudes are ≈30° for parallel and ≈15–20° for antiparallel stacks,
+but a structure being modelled against experimental data is under no obligation
+to be typical.
 
 ### `iteration` — CYANA minimisation depth *(optional, default 300)*
 Number of CYANA minimisation steps run **at every build-up stage**. Must be

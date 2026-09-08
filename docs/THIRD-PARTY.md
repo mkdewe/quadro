@@ -6,7 +6,7 @@ Obtain each under your own licence:
 
 | | Licence | Where to get it |
 |---|---|---|
-| **CYANA 2.1** | **paid** — commercial licence, academic and commercial terms differ | <http://www.cyana.org/> |
+| **CYANA 2.1** | **paid** — commercial licence, academic and commercial terms differ | <https://www.las.jp/english/cyana.html> |
 | **Xplor-NIH 2.39** | free for non-profit institutions, registration required | <https://nmr.cit.nih.gov/xplor-nih/> |
 
 Free does not mean redistributable: Xplor-NIH is excluded from the repository

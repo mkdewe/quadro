@@ -62,7 +62,7 @@ engine, so they use its interface labels. Two differ from the `.inp` keywords:
 The vocabulary is consistent underneath: `orient +` selects the `WH`
 (Watson–Crick/Hoogsteen) hydrogen-bond direction and a tetrad library entry
 whose name ends in `P`; `orient -` selects `HW` and an entry ending in `M` —
-literally plus and minus. See [../INPUT-FORMAT.md](../INPUT-FORMAT.md#orient--glycosidic-orientation-per-tetrad-required).
+literally plus and minus. See [../INPUT-FORMAT.md](../INPUT-FORMAT.md#orient-polarity--hydrogen-bond-directionality-per-tetrad-required).
 
 The input shown in the films is committed as
 [`../../examples/6pnk.inp`](../../examples/6pnk.inp), with the field names

@@ -128,16 +128,23 @@ engine decide. All dots here, so the engine chooses throughout.
 South (C2′-endo, DNA-like), `.` the default for that residue's sugar type. Omit
 the line to accept the defaults everywhere.
 
-**`orient`** — hydrogen-bond directionality, one entry per tetrad, in tetrad
-order — three tetrads here, all `-`. `+` is Watson-Crick/Hoogsteen, `-` is
-Hoogsteen/Watson-Crick. The letter must match the tetrad's position: `A` for the
-first, `B` for the second, `C` for the third.
+**`orient`** (polarity) — hydrogen-bond directionality, one entry per tetrad, in
+tetrad order — three tetrads here, all `-`. `+` is Watson-Crick/Hoogsteen, `-`
+is Hoogsteen/Watson-Crick. The letter must match the tetrad's position: `A` for
+the first, `B` for the second, `C` for the third. This is what the animations
+below label *polarity*, `G4plus` and `G4minus`.
 
-**`rise`** — vertical spacing between stacked tetrads, in ångströms. One value,
-or one per step, as here: `3.3` between tetrads A and B, `3.4` between B and C.
+**`rise`** — displacement along the stack axis, in ångströms. One value, or one
+per step, as here: `3.3` from tetrad A to B, `3.4` from B to C. **Signed:** the
+first tetrad sits at *z* = 0 and every later one is placed at the running sum of
+the steps before it, so a value says where the next tetrad goes *relative to the
+first*, not how far apart two neighbours are. Negative values are ordinary —
+`examples/7ys7.inp` stacks downwards first with `rise -3.8;6.7`.
 
-**`twist`** — rotation between stacked tetrads, in degrees. Same per-step
-syntax. Roughly 30° for parallel stacks, 15–20° for antiparallel.
+**`twist`** — rotation about the same axis, in degrees, accumulated the same way
+from an unrotated first tetrad, and signed for the same reason: the two signs
+are opposite senses of rotation. Roughly 30° for parallel stacks, 15–20° for
+antiparallel.
 
 **`path`** — **the build-up order, and a real parameter of the method.** The
 molecule is assembled one residue at a time in exactly this sequence, with a
@@ -191,10 +198,10 @@ once on its mirror image. See [the mirror pass](docs/ALGORITHM.md#the-mirror-pas
 **[docs/ALGORITHM.md](docs/ALGORITHM.md)** describes each stage, with the
 relevant lines of the engine quoted.
 
-**Stage 1 — ideal tetrad geometry.** Tetrad polarity, the pseudo-atoms and the
-rotation about the N9–C1′ bond, the pseudo-residue **Q**, and the stacking of
-three tetrads by `translate z` and `rotation z` — that is, by `rise` and
-`twist`.
+**Stage 1 — ideal tetrad geometry.** Tetrad polarity (`orient`), the
+pseudo-atoms and the rotation about the N9–C1′ bond, the pseudo-residue **Q**,
+and the stacking of three tetrads by `translate z` and `rotation z` — that is,
+by `rise` and `twist`, both measured from the first tetrad and therefore signed.
 
 ![Stage 1 — building the pseudo-residue Q and stacking three tetrads](docs/media/stage1-tetrad-geometry.webp)
 

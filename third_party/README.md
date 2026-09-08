@@ -5,7 +5,7 @@ software that **cannot be redistributed** and is therefore excluded from this
 repository by `.gitignore`:
 
 ```
-third_party/cyana-2.1/          ← CYANA 2.1     (paid licence — cyana.org)
+third_party/cyana-2.1/          ← CYANA 2.1     (paid licence — las.jp/english/cyana.html)
 third_party/xplor-nih-2.39/     ← Xplor-NIH 2.39 (free for non-profit — nmr.cit.nih.gov/xplor-nih)
 ```
 
