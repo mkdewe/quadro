@@ -23,6 +23,11 @@ authors:
     orcid: "https://orcid.org/0009-0005-4702-6181"
     affiliation: "Poznan University of Technology, Poznań, Poland"
 
+  - family-names: Sarzyńska
+    given-names: Joanna
+    orcid: "https://orcid.org/0000-0002-0500-2238"
+    affiliation: "Institute of Bioorganic Chemistry, Polish Academy of Sciences, Poznań, Poland"
+
   - family-names: Szachniuk
     given-names: Marta
     orcid: "https://orcid.org/0000-0002-8724-7908"
@@ -32,11 +37,6 @@ authors:
     given-names: Tomasz
     orcid: "https://orcid.org/0000-0003-4103-9238"
     affiliation: "Poznan University of Technology, Poznań, Poland"
-
-  - family-names: Sarzyńska
-    given-names: Joanna
-    orcid: "https://orcid.org/0000-0002-0500-2238"
-    affiliation: "Institute of Bioorganic Chemistry, Polish Academy of Sciences, Poznań, Poland"
 
 keywords:
   - G-quadruplex
